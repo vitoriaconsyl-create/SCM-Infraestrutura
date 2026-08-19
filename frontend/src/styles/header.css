@@ -1,0 +1,208 @@
+.header {
+  width: 100%;
+
+  background-color: #ffffff;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+
+.header-container {
+  width: 100%;
+
+  max-width: 1280px;
+
+  min-height: 73px;
+
+  margin: 0 auto;
+
+  padding: 16px 32px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+}
+
+
+/* =========================================================
+   MARCA
+========================================================= */
+
+.header-brand {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+
+.header-logo {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  background-color: #2563eb;
+
+  color: #ffffff;
+}
+
+
+.header-brand-text h1 {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 20px;
+
+  line-height: 1.25;
+
+  font-weight: 700;
+}
+
+
+.header-brand-text p {
+  margin: 3px 0 0;
+
+  color: #475569;
+
+  font-size: 14px;
+
+  line-height: 1.4;
+}
+
+
+/* =========================================================
+   USUÁRIO
+========================================================= */
+
+.header-user {
+  display: flex;
+
+  align-items: center;
+
+  gap: 16px;
+}
+
+
+.header-user-info {
+  text-align: right;
+}
+
+
+.header-user-name {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 14px;
+
+  line-height: 1.4;
+
+  font-weight: 500;
+}
+
+
+.header-user-role {
+  margin: 2px 0 0;
+
+  color: #475569;
+
+  font-size: 12px;
+
+  line-height: 1.4;
+}
+
+
+/* =========================================================
+   SAIR
+========================================================= */
+
+.header-logout {
+  height: 32px;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 0 12px;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 6px;
+
+  background-color: #ffffff;
+
+  color: #334155;
+
+  font-size: 14px;
+
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+
+.header-logout:hover {
+  background-color: #f8fafc;
+
+  border-color: #cbd5e1;
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+
+@media (max-width: 700px) {
+
+  .header-container {
+    padding: 16px 20px;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 16px;
+  }
+
+
+  .header-user {
+    width: 100%;
+
+    justify-content: space-between;
+  }
+
+}
+
+
+@media (max-width: 480px) {
+
+  .header-brand-text h1 {
+    font-size: 17px;
+  }
+
+
+  .header-brand-text p {
+    font-size: 12px;
+  }
+
+}

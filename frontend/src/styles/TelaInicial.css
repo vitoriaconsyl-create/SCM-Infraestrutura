@@ -1,0 +1,698 @@
+/* =========================================================
+   TELA INICIAL - CIDADÃO
+   Baseada no DashboardCidadao.tsx do protótipo
+========================================================= */
+
+.tela-inicial {
+  min-height: 100vh;
+
+  width: 100%;
+
+  background-color: #f8fafc;
+
+  color: #0f172a;
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.tela-inicial-main {
+  width: 100%;
+
+  max-width: 1280px;
+
+  margin: 0 auto;
+
+  padding: 32px;
+}
+
+
+/* =========================================================
+   BOAS-VINDAS
+========================================================= */
+
+.tela-inicial-welcome {
+  margin-bottom: 32px;
+}
+
+
+.tela-inicial-welcome h2 {
+  margin: 0 0 8px;
+
+  color: #0f172a;
+
+  font-size: 24px;
+
+  line-height: 1.3;
+
+  font-weight: 700;
+}
+
+
+.tela-inicial-welcome p {
+  margin: 0;
+
+  color: #475569;
+
+  font-size: 16px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   GRID DE AÇÕES
+========================================================= */
+
+.tela-inicial-actions-grid {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 24px;
+
+  margin-bottom: 32px;
+}
+
+
+/* =========================================================
+   CARD DE AÇÃO
+========================================================= */
+
+.action-card {
+  min-width: 0;
+
+  padding: 24px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  background-color: #ffffff;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 8px;
+
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04);
+
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.action-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+
+/* =========================================================
+   ÍCONE DOS CARDS
+========================================================= */
+
+.action-icon {
+  width: 48px;
+  height: 48px;
+
+  margin-bottom: 12px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  color: #ffffff;
+}
+
+
+.action-icon-blue {
+  background-color: #2563eb;
+}
+
+
+.action-icon-green {
+  background-color: #16a34a;
+}
+
+
+.action-icon-purple {
+  background-color: #9333ea;
+}
+
+
+.action-icon-orange {
+  background-color: #ea580c;
+}
+
+
+/* =========================================================
+   CONTEÚDO DO CARD
+========================================================= */
+
+.action-card-content {
+  flex: 1;
+}
+
+
+.action-card-content h3 {
+  margin: 0 0 6px;
+
+  color: #0f172a;
+
+  font-size: 18px;
+
+  line-height: 1.4;
+
+  font-weight: 600;
+}
+
+
+.action-card-content p {
+  margin: 0;
+
+  color: #475569;
+
+  font-size: 14px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   BOTÃO DOS CARDS
+========================================================= */
+
+.action-button {
+  width: 100%;
+
+  height: 36px;
+
+  margin-top: 20px;
+
+  border: none;
+
+  border-radius: 6px;
+
+  color: #ffffff;
+
+  font-size: 14px;
+
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    filter 0.15s ease;
+}
+
+
+.action-button:hover {
+  filter: brightness(0.92);
+}
+
+
+.action-button-blue {
+  background-color: #2563eb;
+}
+
+
+.action-button-green {
+  background-color: #16a34a;
+}
+
+
+.action-button-purple {
+  background-color: #9333ea;
+}
+
+
+.action-button-orange {
+  background-color: #ea580c;
+}
+
+
+/* =========================================================
+   OCORRÊNCIAS RECENTES
+========================================================= */
+
+.recent-occurrences {
+  width: 100%;
+
+  background-color: #ffffff;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 8px;
+
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+
+/* =========================================================
+   CABEÇALHO DAS OCORRÊNCIAS
+========================================================= */
+
+.recent-occurrences-header {
+  padding: 24px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  border-bottom: 1px solid #e2e8f0;
+}
+
+
+.recent-occurrences-header h2 {
+  margin: 0 0 4px;
+
+  color: #0f172a;
+
+  font-size: 18px;
+
+  line-height: 1.4;
+
+  font-weight: 600;
+}
+
+
+.recent-occurrences-header p {
+  margin: 0;
+
+  color: #475569;
+
+  font-size: 14px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   VER TODAS
+========================================================= */
+
+.see-all-button {
+  height: 32px;
+
+  padding: 0 12px;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 6px;
+
+  background-color: #ffffff;
+
+  color: #334155;
+
+  font-size: 14px;
+
+  font-weight: 500;
+
+  cursor: pointer;
+
+  white-space: nowrap;
+
+  transition:
+    background-color 0.15s ease;
+}
+
+
+.see-all-button:hover {
+  background-color: #f8fafc;
+}
+
+
+/* =========================================================
+   LISTA
+========================================================= */
+
+.occurrences-list {
+  padding: 16px 24px 24px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 16px;
+}
+
+
+/* =========================================================
+   ITEM
+========================================================= */
+
+.occurrence-item {
+  min-height: 72px;
+
+  padding: 16px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  background-color: #f8fafc;
+
+  border-radius: 8px;
+
+  transition:
+    background-color 0.15s ease;
+}
+
+
+.occurrence-item:hover {
+  background-color: #f1f5f9;
+}
+
+
+/* =========================================================
+   INFORMAÇÕES
+========================================================= */
+
+.occurrence-information {
+  display: flex;
+
+  align-items: center;
+
+  gap: 16px;
+
+  min-width: 0;
+}
+
+
+.occurrence-icon {
+  width: 40px;
+  height: 40px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 8px;
+
+  background-color: #ffffff;
+
+  color: #475569;
+}
+
+
+.occurrence-title {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 14px;
+
+  line-height: 1.4;
+
+  font-weight: 500;
+}
+
+
+.occurrence-date {
+  margin: 3px 0 0;
+
+  color: #475569;
+
+  font-size: 14px;
+
+  line-height: 1.4;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.occurrence-status {
+  flex-shrink: 0;
+
+  padding: 4px 12px;
+
+  border-radius: 999px;
+
+  font-size: 14px;
+
+  line-height: 1.4;
+
+  font-weight: 500;
+}
+
+
+.status-concluido {
+  color: #16a34a;
+
+  background-color: #f0fdf4;
+}
+
+
+.status-andamento {
+  color: #2563eb;
+
+  background-color: #eff6ff;
+}
+
+
+.status-aguardando {
+  color: #ea580c;
+
+  background-color: #fff7ed;
+}
+
+
+.status-default {
+  color: #475569;
+
+  background-color: #f8fafc;
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+
+@media (max-width: 1024px) {
+
+  .tela-inicial-actions-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+
+@media (max-width: 700px) {
+
+  .tela-inicial-header-container {
+    padding: 16px 20px;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 16px;
+  }
+
+
+  .tela-inicial-user {
+    width: 100%;
+
+    justify-content: space-between;
+  }
+
+
+  .tela-inicial-main {
+    padding: 24px 20px;
+  }
+
+
+  .tela-inicial-actions-grid {
+    grid-template-columns: 1fr;
+
+    gap: 16px;
+  }
+
+
+  .recent-occurrences-header {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+
+  .see-all-button {
+    width: 100%;
+  }
+
+
+  .occurrence-item {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+
+  .occurrence-status {
+    margin-left: 56px;
+  }
+
+}
+.quick-actions{
+    margin-bottom:40px;
+}
+
+.main-action-card{
+
+    width:100%;
+
+    height:96px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:0 22px;
+
+    border-radius:20px;
+
+    background:linear-gradient(90deg,#2563eb,#1d4ed8);
+
+    box-shadow:0 10px 25px rgba(37,99,235,.30);
+}
+
+.main-action-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+}
+
+.main-action-icon{
+
+    width:52px;
+
+    height:52px;
+
+    border-radius:14px;
+
+    background:rgba(255,255,255,.18);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    color:white;
+}
+
+.main-action-text h3{
+
+    margin:0;
+
+    color:white;
+
+    font-size:28px;
+
+    font-weight:700;
+}
+
+.main-action-text p{
+
+    margin-top:5px;
+
+    color:#dbeafe;
+
+    font-size:16px;
+}
+
+.main-action-button{
+
+    width:50px;
+
+    height:50px;
+
+    border:none;
+
+    background:transparent;
+
+    color:white;
+
+    font-size:34px;
+
+    cursor:pointer;
+}
+
+.main-action-card:hover{
+
+    transform:translateY(-2px);
+
+    transition:.2s;
+}
+
+@media (max-width: 480px) {
+
+  .tela-inicial-brand-text h1 {
+    font-size: 17px;
+  }
+
+
+  .tela-inicial-brand-text p {
+    font-size: 12px;
+  }
+
+
+  .tela-inicial-welcome h2 {
+    font-size: 21px;
+  }
+
+
+  .tela-inicial-welcome p {
+    font-size: 14px;
+  }
+
+
+  .tela-inicial-main {
+    padding: 20px 16px;
+  }
+
+
+  .recent-occurrences-header {
+    padding: 20px;
+  }
+
+
+  .occurrences-list {
+    padding: 12px 16px 20px;
+  }
+
+}

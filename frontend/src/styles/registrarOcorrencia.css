@@ -1,0 +1,835 @@
+/* =====================================================
+   REGISTRAR OCORRÊNCIA
+===================================================== */
+
+.registrar-page{
+    min-height:100vh;
+    background:#f8fafc;
+}
+
+.registrar-main{
+    max-width:1100px;
+    margin:0 auto;
+    padding:32px;
+}
+
+/* =====================================================
+   BREADCRUMB
+===================================================== */
+
+.breadcrumb{
+    margin-bottom:28px;
+}
+
+.btn-voltar{
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    border:none;
+    background:none;
+
+    color:#2563eb;
+
+    font-size:15px;
+    font-weight:600;
+
+    cursor:pointer;
+}
+
+.btn-voltar:hover{
+    color:#1d4ed8;
+}
+
+/* =====================================================
+   TÍTULO
+===================================================== */
+
+.page-title{
+    margin-bottom:28px;
+}
+
+.page-title h2{
+    margin:0;
+    font-size:32px;
+    font-weight:700;
+    color:#0f172a;
+}
+
+.page-title p{
+    margin-top:8px;
+    color:#64748b;
+    font-size:16px;
+}
+
+/* =====================================================
+   FORMULÁRIO
+===================================================== */
+
+.registrar-form{
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+}
+
+/* =====================================================
+   CARDS
+===================================================== */
+
+.form-card{
+
+    background:#fff;
+
+    border:1px solid #e2e8f0;
+
+    border-radius:18px;
+
+    padding:28px;
+
+    box-shadow:0 2px 8px rgba(15,23,42,.05);
+}
+
+.form-card h3{
+
+    margin-top:0;
+
+    margin-bottom:20px;
+
+    font-size:20px;
+
+    color:#0f172a;
+}
+
+/* =====================================================
+   LABELS
+===================================================== */
+
+.form-card label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    margin-top:18px;
+
+    font-weight:600;
+
+    color:#334155;
+}
+
+/* =====================================================
+   INPUTS
+===================================================== */
+
+.form-card input,
+
+.form-card textarea{
+
+    width:100%;
+
+    padding:14px 16px;
+
+    border:1px solid #cbd5e1;
+
+    border-radius:10px;
+
+    font-size:15px;
+
+    outline:none;
+
+    transition:.2s;
+}
+
+.form-card input:focus,
+
+.form-card textarea:focus{
+
+    border-color:#2563eb;
+
+    box-shadow:0 0 0 3px rgba(37,99,235,.15);
+}
+
+.form-card textarea{
+
+    resize:vertical;
+
+    min-height:140px;
+}
+
+/* =====================================================
+   ERROS
+===================================================== */
+
+.error{
+
+    margin-top:10px;
+
+    color:#dc2626;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:6px;
+
+    font-size:14px;
+}
+
+/* =====================================================
+   TIPO DE OCORRÊNCIA
+===================================================== */
+
+.tipos-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:14px;
+}
+
+.tipo-card{
+
+    background:#fff;
+
+    border:2px solid #e2e8f0;
+
+    border-radius:14px;
+
+    padding:18px 12px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    gap:10px;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    font-size:14px;
+
+    font-weight:600;
+
+    color:#334155;
+}
+
+.tipo-card:hover{
+
+    border-color:#3b82f6;
+
+    transform:translateY(-2px);
+
+    box-shadow:0 8px 20px rgba(0,0,0,.06);
+}
+
+.tipo-card.selected{
+
+    border-color:#2563eb;
+
+    background:#eff6ff;
+
+    color:#2563eb;
+}
+
+.emoji{
+
+    font-size:32px;
+}
+
+/* =====================================================
+   GPS
+===================================================== */
+
+.gps-row{
+
+    display:flex;
+
+    gap:12px;
+}
+
+.gps-row input{
+
+    flex:1;
+}
+
+.gps-button{
+
+    min-width:120px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:8px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#2563eb;
+
+    color:#fff;
+
+    font-size:14px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.gps-button:hover{
+
+    background:#1d4ed8;
+}
+
+.spin{
+
+    animation:spin .8s linear infinite;
+}
+
+@keyframes spin{
+
+    from{
+        transform:rotate(0deg);
+    }
+
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+/* =====================================================
+   TEXTAREA
+===================================================== */
+
+.textarea-footer{
+
+    margin-top:8px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    color:#64748b;
+
+    font-size:13px;
+}
+
+/* =====================================================
+   URGÊNCIA
+===================================================== */
+
+.urgencia-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:16px;
+}
+
+.urgencia-card{
+
+    padding:18px;
+
+    border:2px solid #e2e8f0;
+
+    border-radius:14px;
+
+    background:#fff;
+
+    cursor:pointer;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+    text-align:left;
+
+    transition:.25s;
+}
+
+.urgencia-card:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:0 8px 20px rgba(0,0,0,.06);
+}
+
+.urgencia-card strong{
+
+    font-size:16px;
+}
+
+.urgencia-card small{
+
+    color:#64748b;
+
+    line-height:1.4;
+}
+
+/* =====================================================
+   CORES DAS URGÊNCIAS
+===================================================== */
+
+.urgencia-card.baixa{
+
+    background:#eff6ff;
+
+    border-color:#2563eb;
+
+    color:#2563eb;
+}
+
+.urgencia-card.media{
+
+    background:#fef9c3;
+
+    border-color:#eab308;
+
+    color:#a16207;
+}
+
+.urgencia-card.alta{
+
+    background:#fff7ed;
+
+    border-color:#f97316;
+
+    color:#ea580c;
+}
+
+.urgencia-card.urgente{
+
+    background:#fef2f2;
+
+    border-color:#dc2626;
+
+    color:#dc2626;
+}
+
+/* =====================================================
+   FOTO
+===================================================== */
+
+.foto-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:20px;
+}
+
+.remove-image{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:6px;
+
+    background:none;
+
+    border:none;
+
+    color:#dc2626;
+
+    cursor:pointer;
+
+    font-size:14px;
+
+    font-weight:600;
+}
+
+.remove-image:hover{
+
+    color:#b91c1c;
+}
+
+/* =====================================================
+   UPLOAD
+===================================================== */
+
+.upload-area{
+
+    border:2px dashed #cbd5e1;
+
+    border-radius:16px;
+
+    padding:50px 20px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:14px;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    color:#64748b;
+
+    text-align:center;
+}
+
+.upload-area:hover{
+
+    border-color:#2563eb;
+
+    background:#eff6ff;
+}
+
+.upload-area h4{
+
+    margin:0;
+
+    color:#0f172a;
+
+    font-size:18px;
+}
+
+.upload-area p{
+
+    margin:0;
+
+    font-size:14px;
+}
+
+/* =====================================================
+   PREVIEW
+===================================================== */
+
+.preview-image{
+
+    border-radius:16px;
+
+    overflow:hidden;
+
+    border:1px solid #e2e8f0;
+
+    position:relative;
+}
+
+.preview-image img{
+
+    width:100%;
+
+    display:block;
+
+    max-height:420px;
+
+    object-fit:cover;
+}
+
+.preview-info{
+
+    position:absolute;
+
+    left:0;
+
+    right:0;
+
+    bottom:0;
+
+    padding:16px;
+
+    background:linear-gradient(transparent,rgba(0,0,0,.75));
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    color:#fff;
+
+    font-weight:600;
+}
+
+/* =====================================================
+   CAIXA DE INFORMAÇÃO
+===================================================== */
+
+.info-box{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    gap:12px;
+
+    padding:18px;
+
+    background:#eff6ff;
+
+    border:1px solid #bfdbfe;
+
+    border-radius:14px;
+
+    color:#1d4ed8;
+}
+
+.info-box p{
+
+    margin:0;
+
+    line-height:1.6;
+}
+
+/* =====================================================
+   BOTÕES
+===================================================== */
+
+.buttons-area{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:16px;
+
+    margin-bottom:40px;
+}
+
+.btn-primary{
+
+    background:#2563eb;
+
+    color:#fff;
+
+    border:none;
+
+    border-radius:10px;
+
+    padding:14px 28px;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.25s;
+}
+
+.btn-primary:hover{
+
+    background:#1d4ed8;
+}
+
+.btn-secondary{
+
+    background:#fff;
+
+    color:#334155;
+
+    border:1px solid #cbd5e1;
+
+    border-radius:10px;
+
+    padding:14px 28px;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.25s;
+}
+
+.btn-secondary:hover{
+
+    background:#f8fafc;
+}
+
+/* =====================================================
+   TELA DE SUCESSO
+===================================================== */
+
+.success-card{
+
+    max-width:700px;
+
+    margin:0 auto;
+
+    background:#fff;
+
+    border-radius:20px;
+
+    border:1px solid #e2e8f0;
+
+    padding:60px 40px;
+
+    text-align:center;
+
+    box-shadow:0 8px 30px rgba(0,0,0,.06);
+}
+
+.success-icon{
+
+    width:90px;
+
+    height:90px;
+
+    margin:0 auto 25px;
+
+    border-radius:50%;
+
+    background:#dcfce7;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    color:#16a34a;
+}
+
+.success-card h2{
+
+    margin:0;
+
+    color:#0f172a;
+
+    font-size:32px;
+}
+
+.success-card p{
+
+    color:#64748b;
+
+    margin:18px 0 30px;
+
+    line-height:1.6;
+}
+
+.protocol-box{
+
+    margin:30px auto;
+
+    max-width:320px;
+
+    background:#eff6ff;
+
+    border:1px solid #bfdbfe;
+
+    border-radius:16px;
+
+    padding:24px;
+}
+
+.protocol-box span{
+
+    display:block;
+
+    color:#2563eb;
+
+    font-size:14px;
+
+    margin-bottom:8px;
+}
+
+.protocol-box strong{
+
+    font-size:34px;
+
+    color:#1d4ed8;
+
+    letter-spacing:2px;
+}
+
+.success-buttons{
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:16px;
+
+    margin-top:30px;
+}
+
+/* =====================================================
+   RESPONSIVIDADE
+===================================================== */
+
+@media(max-width:900px){
+
+    .urgencia-grid{
+
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:768px){
+
+    .registrar-main{
+
+        padding:20px;
+    }
+
+    .tipos-grid{
+
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .gps-row{
+
+        flex-direction:column;
+    }
+
+    .buttons-area{
+
+        flex-direction:column;
+    }
+
+    .success-buttons{
+
+        flex-direction:column;
+    }
+
+}
+
+@media(max-width:500px){
+
+    .page-title h2{
+
+        font-size:26px;
+    }
+
+    .tipos-grid{
+
+        grid-template-columns:1fr;
+    }
+
+    .urgencia-grid{
+
+        grid-template-columns:1fr;
+    }
+
+    .form-card{
+
+        padding:20px;
+    }
+
+}

@@ -1,0 +1,748 @@
+.minhasOcorrencias {
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.minhasOcorrenciasMain {
+  width: min(100% - 32px, 1000px);
+  margin: 0 auto;
+  padding: 32px 0 50px;
+}
+
+/* VOLTAR */
+
+.voltarButton {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  border: none;
+  background: transparent;
+
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  margin-bottom: 24px;
+}
+
+.voltarButton:hover {
+  color: #1d4ed8;
+}
+
+/* TÍTULO */
+
+.minhasOcorrenciasTitulo {
+  margin-bottom: 25px;
+}
+
+.minhasOcorrenciasTitulo h2 {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.minhasOcorrenciasTitulo p {
+  margin: 7px 0 0;
+
+  color: #64748b;
+  font-size: 15px;
+}
+
+/* ESTATÍSTICAS */
+
+.estatisticasOcorrencias {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+
+  margin-bottom: 20px;
+}
+
+.estatisticaCard {
+  background: white;
+
+  border: 1px solid #e2e8f0;
+  border-top: 4px solid;
+
+  border-radius: 12px;
+
+  padding: 16px;
+
+  box-shadow: 0 2px 5px rgba(15, 23, 42, 0.04);
+}
+
+.estatisticaCard strong {
+  display: block;
+
+  font-size: 25px;
+  line-height: 1;
+
+  margin-bottom: 6px;
+}
+
+.estatisticaCard span {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.estatisticaCard.total {
+  border-top-color: #94a3b8;
+}
+
+.estatisticaCard.total strong {
+  color: #334155;
+}
+
+.estatisticaCard.aguardando {
+  border-top-color: #fb923c;
+}
+
+.estatisticaCard.aguardando strong {
+  color: #ea580c;
+}
+
+.estatisticaCard.andamento {
+  border-top-color: #3b82f6;
+}
+
+.estatisticaCard.andamento strong {
+  color: #2563eb;
+}
+
+.estatisticaCard.concluido {
+  border-top-color: #22c55e;
+}
+
+.estatisticaCard.concluido strong {
+  color: #16a34a;
+}
+
+/* FILTROS */
+
+.filtrosOcorrencias {
+  display: flex;
+  gap: 12px;
+
+  background: white;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+
+  padding: 14px;
+
+  margin-bottom: 14px;
+}
+
+.campoBusca {
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+
+  padding: 0 12px;
+
+  color: #94a3b8;
+}
+
+.campoBusca input {
+  width: 100%;
+
+  border: none;
+  outline: none;
+
+  padding: 10px 0;
+
+  font-size: 14px;
+  color: #334155;
+}
+
+.campoBusca input::placeholder {
+  color: #94a3b8;
+}
+
+.campoFiltro {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  color: #94a3b8;
+}
+
+.campoFiltro select {
+  min-width: 170px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+
+  background: white;
+
+  padding: 10px;
+
+  color: #475569;
+  font-size: 14px;
+
+  outline: none;
+}
+
+/* LISTA */
+
+.listaMinhasOcorrencias {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ocorrenciaCard {
+  background: white;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+
+  overflow: hidden;
+
+  box-shadow: 0 2px 5px rgba(15, 23, 42, 0.04);
+
+  transition: 0.2s;
+}
+
+.ocorrenciaCardAberto {
+  border-color: #bfdbfe;
+}
+
+/* CABEÇALHO */
+
+.ocorrenciaCabecalho {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 17px 18px;
+
+  border: none;
+  background: white;
+
+  cursor: pointer;
+
+  text-align: left;
+}
+
+.ocorrenciaCabecalho:hover {
+  background: #f8fafc;
+}
+
+.ocorrenciaIcone {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  flex-shrink: 0;
+}
+
+.ocorrenciaResumo {
+  flex: 1;
+  min-width: 0;
+}
+
+.ocorrenciaTituloLinha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ocorrenciaTituloLinha h3 {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.ocorrenciaMeta {
+  display: flex;
+  gap: 12px;
+
+  margin-top: 5px;
+}
+
+.ocorrenciaMeta span {
+  color: #94a3b8;
+
+  font-size: 12px;
+}
+
+/* STATUS */
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+
+  border-radius: 20px;
+
+  padding: 4px 9px;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.statusAguardando {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.statusAndamento {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.statusConcluido {
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+.statusCancelado {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+/* DETALHES */
+
+.ocorrenciaDetalhes {
+  border-top: 1px solid #f1f5f9;
+
+  background: #f8fafc;
+
+  padding: 18px;
+}
+
+.detalhesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+
+  margin-bottom: 17px;
+}
+
+.detalheItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+
+  color: #64748b;
+
+  font-size: 13px;
+}
+
+.detalheItem svg {
+  color: #94a3b8;
+
+  flex-shrink: 0;
+}
+
+.detalheItem strong {
+  color: #334155;
+}
+
+.descricaoOcorrencia {
+  margin-bottom: 16px;
+}
+
+.descricaoOcorrencia strong {
+  display: block;
+
+  color: #334155;
+
+  font-size: 13px;
+
+  margin-bottom: 5px;
+}
+
+.descricaoOcorrencia p {
+  margin: 0;
+
+  color: #64748b;
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* BOTÕES */
+
+.acoesOcorrencia {
+  display: flex;
+  gap: 8px;
+}
+
+.editarButton,
+.cancelarButton {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 8px 12px;
+
+  border-radius: 7px;
+
+  background: white;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.editarButton {
+  border: 1px solid #bfdbfe;
+  color: #2563eb;
+}
+
+.editarButton:hover {
+  background: #eff6ff;
+}
+
+.cancelarButton {
+  border: 1px solid #fecaca;
+  color: #dc2626;
+}
+
+.cancelarButton:hover {
+  background: #fef2f2;
+}
+
+/* MENSAGENS */
+
+.mensagemConcluida,
+.mensagemCancelada {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 12px;
+}
+
+.mensagemConcluida {
+  color: #16a34a;
+}
+
+.mensagemCancelada {
+  color: #64748b;
+}
+
+/* NENHUMA OCORRÊNCIA */
+
+.nenhumaOcorrencia {
+  background: white;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+
+  padding: 50px 20px;
+
+  text-align: center;
+}
+
+.nenhumaOcorrencia svg {
+  color: #cbd5e1;
+  margin-bottom: 10px;
+}
+
+.nenhumaOcorrencia h3 {
+  margin: 0;
+
+  color: #64748b;
+
+  font-size: 15px;
+}
+
+.nenhumaOcorrencia p {
+  margin-top: 5px;
+
+  color: #94a3b8;
+
+  font-size: 13px;
+}
+
+/* MODAIS */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+
+  z-index: 100;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.modalOcorrencia,
+.modalConfirmacao {
+  width: 100%;
+
+  background: white;
+
+  border-radius: 16px;
+
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.25);
+}
+
+.modalOcorrencia {
+  max-width: 520px;
+}
+
+.modalConfirmacao {
+  max-width: 420px;
+
+  padding: 28px;
+
+  text-align: center;
+}
+
+.modalCabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 18px 22px;
+
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.modalCabecalho h3 {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 18px;
+}
+
+.modalCabecalho button {
+  border: none;
+  background: transparent;
+
+  color: #94a3b8;
+
+  cursor: pointer;
+}
+
+.modalConteudo {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+
+  padding: 22px;
+}
+
+.modalConteudo label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  color: #334155;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.modalConteudo input,
+.modalConteudo select,
+.modalConteudo textarea {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+
+  padding: 10px;
+
+  outline: none;
+
+  font-family: inherit;
+  font-size: 14px;
+
+  color: #334155;
+  background: white;
+}
+
+.modalConteudo textarea {
+  resize: vertical;
+}
+
+.modalConteudo input:focus,
+.modalConteudo select:focus,
+.modalConteudo textarea:focus {
+  border-color: #60a5fa;
+}
+
+.modalAcoes {
+  display: flex;
+  gap: 10px;
+
+  padding: 0 22px 22px;
+}
+
+.modalAcoes button {
+  flex: 1;
+
+  padding: 10px;
+
+  border-radius: 8px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.modalCancelar {
+  border: 1px solid #cbd5e1;
+  background: white;
+
+  color: #475569;
+}
+
+.modalSalvar {
+  border: none;
+  background: #2563eb;
+
+  color: white;
+}
+
+.modalSalvar:hover {
+  background: #1d4ed8;
+}
+
+.modalExcluir {
+  border: none;
+  background: #dc2626;
+
+  color: white;
+}
+
+.modalExcluir:hover {
+  background: #b91c1c;
+}
+
+/* CONFIRMAÇÃO */
+
+.iconeConfirmacao {
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 auto 15px;
+
+  border-radius: 50%;
+
+  background: #fee2e2;
+
+  color: #dc2626;
+}
+
+.modalConfirmacao h3 {
+  margin: 0 0 8px;
+
+  color: #0f172a;
+
+  font-size: 19px;
+}
+
+.modalConfirmacao p {
+  margin: 0 0 22px;
+
+  color: #64748b;
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* RESPONSIVIDADE */
+
+@media (max-width: 700px) {
+
+  .minhasOcorrenciasMain {
+    width: calc(100% - 24px);
+    padding-top: 22px;
+  }
+
+  .estatisticasOcorrencias {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .filtrosOcorrencias {
+    flex-direction: column;
+  }
+
+  .campoFiltro select {
+    width: 100%;
+  }
+
+  .detalhesGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .ocorrenciaCabecalho {
+    padding: 14px;
+  }
+
+  .ocorrenciaDetalhes {
+    padding: 15px;
+  }
+
+}
+
+@media (max-width: 450px) {
+
+  .minhasOcorrenciasTitulo h2 {
+    font-size: 23px;
+  }
+
+  .estatisticaCard {
+    padding: 13px;
+  }
+
+  .ocorrenciaTituloLinha {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .acoesOcorrencia {
+    flex-direction: column;
+  }
+
+  .acoesOcorrencia button {
+    justify-content: center;
+  }
+
+  .modalAcoes {
+    flex-direction: column;
+  }
+
+}

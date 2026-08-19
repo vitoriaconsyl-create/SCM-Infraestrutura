@@ -1,0 +1,245 @@
+.acompanhar-container {
+    min-height: 100vh;
+    background: #f8fafc;
+}
+
+.acompanhar-main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 24px 50px;
+}
+
+.acompanhar-voltar {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    border: none;
+    background: transparent;
+    color: #2563eb;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 25px;
+}
+
+.acompanhar-voltar:hover {
+    color: #1d4ed8;
+}
+
+.acompanhar-header {
+    margin-bottom: 25px;
+}
+
+.acompanhar-header h2 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.acompanhar-header p {
+    margin: 7px 0 0;
+    color: #64748b;
+    font-size: 15px;
+}
+
+.acompanhar-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.acompanhar-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+}
+
+.acompanhar-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.acompanhar-card-title {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.acompanhar-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: #eff6ff;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.acompanhar-card-title h3 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.acompanhar-card-title span {
+    display: block;
+    margin-top: 5px;
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+.acompanhar-status {
+    padding: 6px 11px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.acompanhar-status-aguardando {
+    background: #fff7ed;
+    color: #c2410c;
+    border: 1px solid #fed7aa;
+}
+
+.acompanhar-status-andamento {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+}
+
+.acompanhar-status-concluido {
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+.acompanhar-informacoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-top: 20px;
+    padding-top: 17px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.acompanhar-info {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.acompanhar-info svg {
+    color: #94a3b8;
+    flex-shrink: 0;
+}
+
+.acompanhar-descricao {
+    margin: 16px 0 20px;
+    color: #475569;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.acompanhar-progresso {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.acompanhar-progresso-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    min-width: 80px;
+    color: #94a3b8;
+    font-size: 11px;
+    text-align: center;
+}
+
+.acompanhar-progresso-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.acompanhar-progresso-item.concluido {
+    color: #16a34a;
+}
+
+.acompanhar-progresso-item.concluido .acompanhar-progresso-icon {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.acompanhar-progresso-item.atual {
+    color: #2563eb;
+}
+
+.acompanhar-progresso-item.atual .acompanhar-progresso-icon {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.acompanhar-linha {
+    height: 2px;
+    background: #e2e8f0;
+    flex: 1;
+    margin-top: 16px;
+}
+
+@media (max-width: 700px) {
+
+    .acompanhar-main {
+        padding: 25px 16px 40px;
+    }
+
+    .acompanhar-header h2 {
+        font-size: 24px;
+    }
+
+    .acompanhar-card {
+        padding: 17px;
+    }
+
+    .acompanhar-card-top {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .acompanhar-status {
+        align-self: flex-start;
+    }
+
+    .acompanhar-progresso-item {
+        min-width: 55px;
+        font-size: 9px;
+    }
+
+    .acompanhar-progresso-icon {
+        width: 30px;
+        height: 30px;
+    }
+
+    .acompanhar-linha {
+        margin-top: 14px;
+    }
+}

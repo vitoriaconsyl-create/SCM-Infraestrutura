@@ -1,0 +1,725 @@
+/* Tela inicial do administrador */
+
+.tela-inicial-admin {
+  min-height: 100vh;
+  width: 100%;
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+/* Cabeçalho */
+
+.tela-inicial-admin-header {
+  width: 100%;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.tela-inicial-admin-header-container {
+  width: 100%;
+  max-width: 1280px;
+  min-height: 72px;
+  margin: 0 auto;
+  padding: 16px 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 24px;
+}
+
+/* Identidade */
+
+.tela-inicial-admin-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.tela-inicial-admin-brand-icon {
+  width: 40px;
+  height: 40px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: #2563eb;
+  border-radius: 8px;
+
+  color: #ffffff;
+}
+
+.tela-inicial-admin-brand-text {
+  min-width: 0;
+}
+
+.tela-inicial-admin-brand-text h1 {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 20px;
+  line-height: 1.3;
+  font-weight: 700;
+}
+
+.tela-inicial-admin-brand-text p {
+  margin: 3px 0 0;
+
+  color: #475569;
+
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Usuário */
+
+.tela-inicial-admin-user {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  flex-shrink: 0;
+}
+
+.tela-inicial-admin-user-info {
+  text-align: right;
+}
+
+.tela-inicial-admin-user-name {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.tela-inicial-admin-user-role {
+  margin: 3px 0 0;
+
+  color: #475569;
+
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* Botão sair */
+
+.tela-inicial-admin-logout {
+  height: 36px;
+
+  padding: 0 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+
+  background-color: #ffffff;
+
+  color: #334155;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition: background-color 0.15s ease;
+}
+
+.tela-inicial-admin-logout:hover {
+  background-color: #f8fafc;
+}
+
+/* Conteúdo principal */
+
+.tela-inicial-admin-main {
+  width: 100%;
+  max-width: 1280px;
+
+  margin: 0 auto;
+
+  padding: 32px;
+}
+
+/* Boas-vindas */
+
+.tela-inicial-admin-welcome {
+  margin-bottom: 32px;
+}
+
+.tela-inicial-admin-welcome h2 {
+  margin: 0 0 8px;
+
+  color: #0f172a;
+
+  font-size: 24px;
+  line-height: 1.3;
+  font-weight: 700;
+}
+
+.tela-inicial-admin-welcome p {
+  margin: 0;
+
+  color: #475569;
+
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Cards de estatísticas */
+
+.admin-stats-grid {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 24px;
+
+  margin-bottom: 32px;
+}
+
+.admin-stat-card {
+  min-width: 0;
+
+  padding: 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background-color: #ffffff;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.admin-stat-content {
+  min-width: 0;
+}
+
+.admin-stat-label {
+  margin: 0 0 6px;
+
+  color: #475569;
+
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.admin-stat-value {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 30px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.admin-stat-icon {
+  width: 48px;
+  height: 48px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+}
+
+/* Cores dos indicadores */
+
+.admin-stat-icon-orange {
+  color: #ea580c;
+  background-color: #fff7ed;
+}
+
+.admin-stat-icon-blue {
+  color: #2563eb;
+  background-color: #eff6ff;
+}
+
+.admin-stat-icon-green {
+  color: #16a34a;
+  background-color: #f0fdf4;
+}
+
+/* Cards de ações */
+
+.admin-actions-grid {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 24px;
+
+  margin-bottom: 32px;
+}
+
+.admin-action-card {
+  min-width: 0;
+
+  padding: 24px;
+
+  display: flex;
+  flex-direction: column;
+
+  background-color: #ffffff;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.admin-action-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+.admin-action-icon {
+  width: 48px;
+  height: 48px;
+
+  margin-bottom: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  color: #ffffff;
+}
+
+.admin-action-icon-blue {
+  background-color: #2563eb;
+}
+
+.admin-action-icon-green {
+  background-color: #16a34a;
+}
+
+.admin-action-icon-purple {
+  background-color: #9333ea;
+}
+
+.admin-action-content {
+  flex: 1;
+}
+
+.admin-action-content h3 {
+  margin: 0 0 6px;
+
+  color: #0f172a;
+
+  font-size: 18px;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.admin-action-content p {
+  margin: 0;
+
+  color: #475569;
+
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.admin-action-button {
+  width: 100%;
+  height: 36px;
+
+  margin-top: 20px;
+
+  border: none;
+  border-radius: 6px;
+
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition: filter 0.15s ease;
+}
+
+.admin-action-button:hover {
+  filter: brightness(0.92);
+}
+
+.admin-action-button-blue {
+  background-color: #2563eb;
+}
+
+.admin-action-button-green {
+  background-color: #16a34a;
+}
+
+.admin-action-button-purple {
+  background-color: #9333ea;
+}
+
+/* Ocorrências pendentes */
+
+.admin-pending {
+  width: 100%;
+
+  background-color: #ffffff;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.admin-pending-header {
+  padding: 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.admin-pending-header h2 {
+  margin: 0 0 4px;
+
+  color: #0f172a;
+
+  font-size: 18px;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.admin-pending-header p {
+  margin: 0;
+
+  color: #475569;
+
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.admin-see-all-button {
+  height: 32px;
+
+  padding: 0 12px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+
+  background-color: #ffffff;
+
+  color: #334155;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  white-space: nowrap;
+
+  transition: background-color 0.15s ease;
+}
+
+.admin-see-all-button:hover {
+  background-color: #f8fafc;
+}
+
+/* Lista de ocorrências */
+
+.admin-pending-list {
+  padding: 16px 24px 24px;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 16px;
+}
+
+.admin-pending-item {
+  min-height: 72px;
+
+  padding: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  background-color: #f8fafc;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  transition: background-color 0.15s ease;
+}
+
+.admin-pending-item:hover {
+  background-color: #f1f5f9;
+}
+
+.admin-pending-information {
+  display: flex;
+  align-items: center;
+
+  gap: 16px;
+
+  min-width: 0;
+}
+
+.admin-pending-icon {
+  width: 40px;
+  height: 40px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  background-color: #ffffff;
+
+  color: #475569;
+}
+
+.admin-pending-content {
+  min-width: 0;
+}
+
+.admin-pending-title {
+  margin: 0;
+
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  color: #0f172a;
+
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.admin-pending-location {
+  margin: 4px 0 0;
+
+  color: #475569;
+
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.admin-pending-citizen {
+  margin: 3px 0 0;
+
+  color: #64748b;
+
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* Prioridade */
+
+.admin-priority {
+  padding: 4px 8px;
+
+  border-radius: 999px;
+
+  font-size: 12px;
+  line-height: 1.3;
+  font-weight: 500;
+
+  white-space: nowrap;
+}
+
+.admin-priority-urgente {
+  color: #b91c1c;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+}
+
+.admin-priority-alta {
+  color: #c2410c;
+  background-color: #fff7ed;
+  border: 1px solid #fed7aa;
+}
+
+.admin-priority-media {
+  color: #a16207;
+  background-color: #fefce8;
+  border: 1px solid #fde68a;
+}
+
+.admin-priority-baixa {
+  color: #15803d;
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+
+/* Botão atribuir */
+
+.admin-assign-button {
+  height: 36px;
+
+  padding: 0 14px;
+
+  flex-shrink: 0;
+
+  border: none;
+  border-radius: 6px;
+
+  background-color: #2563eb;
+
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition: background-color 0.15s ease;
+}
+
+.admin-assign-button:hover {
+  background-color: #1d4ed8;
+}
+
+/* Responsividade */
+
+@media (max-width: 1024px) {
+  .admin-stats-grid,
+  .admin-actions-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-actions-grid .admin-action-card:last-child {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 700px) {
+  .tela-inicial-admin-header-container {
+    padding: 16px 20px;
+  }
+
+  .tela-inicial-admin-brand-text h1 {
+    font-size: 17px;
+  }
+
+  .tela-inicial-admin-brand-text p {
+    font-size: 12px;
+  }
+
+  .tela-inicial-admin-user-info {
+    display: none;
+  }
+
+  .tela-inicial-admin-main {
+    padding: 24px 20px;
+  }
+
+  .tela-inicial-admin-welcome h2 {
+    font-size: 21px;
+  }
+
+  .tela-inicial-admin-welcome p {
+    font-size: 14px;
+  }
+
+  .admin-stats-grid,
+  .admin-actions-grid {
+    grid-template-columns: 1fr;
+
+    gap: 16px;
+  }
+
+  .admin-actions-grid .admin-action-card:last-child {
+    grid-column: auto;
+  }
+
+  .admin-pending-header {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .admin-see-all-button {
+    width: 100%;
+  }
+
+  .admin-pending-item {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .admin-assign-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .tela-inicial-admin-main {
+    padding: 20px 16px;
+  }
+
+  .tela-inicial-admin-header-container {
+    padding: 14px 16px;
+  }
+
+  .admin-stat-card,
+  .admin-action-card {
+    padding: 20px;
+  }
+
+  .admin-pending-header {
+    padding: 20px;
+  }
+
+  .admin-pending-list {
+    padding: 12px 16px 20px;
+  }
+
+  .admin-pending-information {
+    align-items: flex-start;
+  }
+}
