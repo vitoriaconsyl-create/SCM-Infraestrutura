@@ -10,6 +10,7 @@ import AcompanharOcorrencias from "./pages/AcompanharOcorrencias.jsx";
 import TelaInicialAdmin from "./pages/TelaInicialAdmin.jsx";
 import GerenciarOcorrenciasAdmin from "./pages/GerenciarOcorrenciasAdmin.jsx";
 import MapaAdmin from "./pages/MapaAdmin.jsx";
+import EmitirRelatorios from "./pages/EmitirRelatorios.jsx";
 
 function App() {
 
@@ -192,9 +193,28 @@ if (screen === "mapaAdmin") {
         />
     );
 }
-  /* =====================================================
-     LOGIN
-  ===================================================== */
+/* =====================================================
+   EMITIR RELATÓRIOS - ADMINISTRADOR
+===================================================== */
+
+if (screen === "relatorios") {
+
+  return (
+    <EmitirRelatorios
+      userName="Maria Oliveira"
+
+      onVoltar={() =>
+        setScreen("telaInicialAdmin")
+      }
+
+      onLogout={() =>
+        setScreen("login")
+      }
+    />
+  );
+
+}
+  /* LOGIN */
 
   return (
     <Login
