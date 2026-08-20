@@ -1,0 +1,739 @@
+.mapa-admin-page {
+    min-height: 100vh;
+    background: #f8fafc;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* HEADER */
+
+.mapa-admin-header {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    padding: 14px 24px;
+    z-index: 1000;
+}
+
+.mapa-admin-header-esquerda,
+.mapa-admin-header-direita {
+    display: flex;
+    align-items: center;
+}
+
+.mapa-admin-header-esquerda {
+    gap: 12px;
+}
+
+.mapa-admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mapa-admin-logo {
+    width: 42px;
+    height: 42px;
+    border-radius: 9px;
+    background: #2563eb;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mapa-admin-header h1 {
+    margin: 0;
+    font-size: 18px;
+    color: #0f172a;
+}
+
+.mapa-admin-header p {
+    margin: 3px 0 0;
+    font-size: 12px;
+    color: #64748b;
+}
+
+.mapa-admin-header-direita {
+    gap: 16px;
+}
+
+.mapa-admin-usuario {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+}
+
+.mapa-admin-usuario strong {
+    font-size: 14px;
+    color: #1e293b;
+}
+
+.mapa-admin-usuario span {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.mapa-admin-sair {
+    border: 1px solid #cbd5e1;
+    background: white;
+    padding: 8px 13px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+    color: #334155;
+}
+
+.mapa-admin-sair:hover {
+    background: #f8fafc;
+}
+
+
+/* FILTROS */
+
+.mapa-admin-filtros {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.mapa-admin-voltar {
+    border: none;
+    background: none;
+    color: #2563eb;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mapa-admin-separador {
+    color: #cbd5e1;
+}
+
+.mapa-admin-filtro-lista {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: wrap;
+    color: #94a3b8;
+}
+
+.mapa-admin-filtro {
+    border: 1px solid #e2e8f0;
+    background: white;
+    color: #475569;
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.mapa-admin-filtro:hover {
+    border-color: #93c5fd;
+}
+
+.mapa-admin-filtro.ativo {
+    background: #2563eb;
+    color: white;
+    border-color: #2563eb;
+}
+
+.mapa-admin-filtro span {
+    margin-left: 4px;
+}
+
+
+/* CONTEÚDO */
+
+.mapa-admin-conteudo {
+    flex: 1;
+    display: flex;
+    min-height: 0;
+    height: calc(100vh - 125px);
+}
+
+.mapa-admin-area {
+    flex: 1;
+    position: relative;
+    min-width: 0;
+}
+
+.mapa-admin-leaflet {
+    width: 100%;
+    height: 100%;
+}
+
+
+/* MARCADORES */
+
+.marcador-leaflet {
+    background: transparent;
+    border: none;
+}
+
+.marcador-principal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s;
+}
+
+.marcador-circulo {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid var(--cor-marcador);
+    color: var(--cor-marcador);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 17px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+}
+
+.marcador-ponta {
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 10px solid var(--cor-marcador);
+    margin-top: -1px;
+}
+
+.marcador-ativo {
+    transform: scale(1.25);
+}
+
+
+/* CONTADOR */
+
+.mapa-admin-contador {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 10px 17px;
+    text-align: center;
+    z-index: 500;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.mapa-admin-contador span,
+.mapa-admin-contador small {
+    display: block;
+    font-size: 11px;
+    color: #64748b;
+}
+
+.mapa-admin-contador strong {
+    display: block;
+    font-size: 22px;
+    color: #0f172a;
+}
+
+
+/* LEGENDA */
+
+.mapa-admin-legenda {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px 14px;
+    z-index: 500;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.mapa-admin-legenda strong {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    color: #475569;
+}
+
+.mapa-admin-item-legenda {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: #475569;
+    margin-bottom: 5px;
+}
+
+.mapa-admin-item-legenda span {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+}
+
+
+/* SIDEBAR */
+
+.mapa-admin-sidebar {
+    width: 350px;
+    background: white;
+    border-left: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.mapa-admin-sidebar-header {
+    padding: 16px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.mapa-admin-sidebar-header h2 {
+    margin: 0 0 4px;
+    font-size: 15px;
+    color: #1e293b;
+}
+
+.mapa-admin-sidebar-header span {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+
+/* LISTA */
+
+.mapa-admin-lista {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.mapa-admin-item {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #f1f5f9;
+    background: white;
+    padding: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.mapa-admin-item:hover {
+    background: #f8fafc;
+}
+
+.mapa-admin-item-icone {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.mapa-admin-item-info {
+    min-width: 0;
+    flex: 1;
+}
+
+.mapa-admin-item-info strong {
+    display: block;
+    font-size: 13px;
+    color: #0f172a;
+    margin-bottom: 3px;
+}
+
+.mapa-admin-item-info > span {
+    display: block;
+    font-size: 12px;
+    color: #64748b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mapa-admin-item-info > div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.mapa-admin-item-info small {
+    color: #94a3b8;
+}
+
+
+/* BADGES */
+
+.badge-admin {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 20px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.badge-admin.grande {
+    margin-bottom: 12px;
+}
+
+.status-urgente {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+.status-pendente {
+    background: #fff7ed;
+    color: #c2410c;
+    border: 1px solid #fed7aa;
+}
+
+.status-andamento {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+}
+
+.status-concluido {
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+.status-cancelado {
+    background: #f8fafc;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+
+
+/* DETALHES */
+
+.mapa-admin-detalhes {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.mapa-admin-detalhes-header {
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.mapa-admin-detalhes-header span {
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+.mapa-admin-detalhes-header h2 {
+    margin: 3px 0 0;
+    font-size: 15px;
+    color: #0f172a;
+}
+
+.mapa-admin-detalhes-header button {
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: #f8fafc;
+    border-radius: 6px;
+    color: #64748b;
+    cursor: pointer;
+}
+
+
+/* ABAS */
+
+.mapa-admin-abas {
+    display: flex;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.mapa-admin-abas button {
+    flex: 1;
+    padding: 11px 3px;
+    border: none;
+    border-bottom: 2px solid transparent;
+    background: white;
+    color: #64748b;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.mapa-admin-abas button.ativa {
+    color: #2563eb;
+    border-bottom-color: #2563eb;
+}
+
+
+/* CORPO */
+
+.mapa-admin-detalhes-corpo {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+}
+
+.campos-admin {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+}
+
+.campos-admin label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: #94a3b8;
+    margin-bottom: 3px;
+}
+
+.campos-admin p {
+    margin: 0;
+    color: #475569;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+
+/* AÇÕES */
+
+.acoes-admin {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    margin-top: 18px;
+}
+
+.acoes-admin button {
+    border: 1px solid #cbd5e1;
+    background: white;
+    border-radius: 6px;
+    padding: 7px 3px;
+    font-size: 10px;
+    color: #475569;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+}
+
+.acoes-admin button:hover {
+    background: #f8fafc;
+}
+
+
+/* FORMULÁRIOS */
+
+.form-admin {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form-admin p {
+    font-size: 12px;
+    color: #64748b;
+    margin: 0 0 5px;
+}
+
+.form-admin label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+}
+
+.form-admin select,
+.form-admin textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    padding: 9px;
+    font-family: inherit;
+    font-size: 13px;
+    background: white;
+}
+
+.form-admin textarea {
+    resize: vertical;
+}
+
+.botao-admin-principal,
+.botao-admin-notificar {
+    border: none;
+    border-radius: 7px;
+    padding: 10px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
+    font-weight: 600;
+    margin-top: 5px;
+}
+
+.botao-admin-principal {
+    background: #2563eb;
+}
+
+.botao-admin-principal:hover {
+    background: #1d4ed8;
+}
+
+.botao-admin-notificar {
+    background: #16a34a;
+}
+
+.botao-admin-notificar:hover {
+    background: #15803d;
+}
+
+.botao-admin-principal:disabled,
+.botao-admin-notificar:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+/* POPUP */
+
+.popup-admin {
+    min-width: 230px;
+}
+
+.popup-admin-topo {
+    display: flex;
+    gap: 9px;
+}
+
+.popup-admin-icone {
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.popup-admin-topo strong {
+    display: block;
+    font-size: 13px;
+}
+
+.popup-admin-topo span {
+    display: block;
+    font-size: 11px;
+    color: #64748b;
+    margin-top: 2px;
+}
+
+.popup-admin p {
+    font-size: 12px;
+    color: #475569;
+    line-height: 1.4;
+}
+
+.popup-admin-rodape {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+/* TOAST */
+
+.mapa-admin-toast {
+    position: fixed;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #0f172a;
+    color: white;
+    padding: 11px 18px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+    z-index: 5000;
+}
+
+
+/* LOADING */
+
+.girando {
+    animation: girar 0.8s linear infinite;
+}
+
+@keyframes girar {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* RESPONSIVO */
+
+@media (max-width: 900px) {
+
+    .mapa-admin-sidebar {
+        width: 300px;
+    }
+
+}
+
+@media (max-width: 700px) {
+
+    .mapa-admin-header {
+        padding: 12px;
+    }
+
+    .mapa-admin-usuario {
+        display: none;
+    }
+
+    .mapa-admin-filtros {
+        padding: 10px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .mapa-admin-separador {
+        display: none;
+    }
+
+    .mapa-admin-conteudo {
+        height: calc(100vh - 180px);
+    }
+
+    .mapa-admin-sidebar {
+        display: none;
+    }
+
+}

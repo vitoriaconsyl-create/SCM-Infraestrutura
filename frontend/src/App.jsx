@@ -8,6 +8,8 @@ import MapaOcorrencias from "./pages/MapaOcorrencias.jsx";
 import MinhasOcorrencias from "./pages/MinhasOcorrencias.jsx";
 import AcompanharOcorrencias from "./pages/AcompanharOcorrencias.jsx";
 import TelaInicialAdmin from "./pages/TelaInicialAdmin.jsx";
+import GerenciarOcorrenciasAdmin from "./pages/GerenciarOcorrenciasAdmin.jsx";
+import MapaAdmin from "./pages/MapaAdmin.jsx";
 
 function App() {
 
@@ -145,7 +147,7 @@ function App() {
         }
 
         onVisualizarMapa={() =>
-          setScreen("mapaOcorrenciasAdmin")
+          setScreen("mapaAdmin")
         }
 
         onRelatorios={() =>
@@ -157,6 +159,39 @@ function App() {
 
   }
 
+  /* =====================================================
+   GERENCIAR OCORRÊNCIAS - ADMINISTRADOR
+===================================================== */
+
+if (screen === "gerenciarOcorrencias") {
+
+  return (
+    <GerenciarOcorrenciasAdmin
+
+      userName="Maria Oliveira"
+
+      onVoltar={() =>
+        setScreen("telaInicialAdmin")
+      }
+
+      onLogout={() =>
+        setScreen("login")
+      }
+
+    />
+  );
+
+}
+/* Mapa Admin */
+if (screen === "mapaAdmin") {
+    return (
+        <MapaAdmin
+            onVoltar={() => setScreen("telaInicialAdmin")}
+            onLogout={() => setScreen("login")}
+            userName="Administrador"
+        />
+    );
+}
   /* =====================================================
      LOGIN
   ===================================================== */
