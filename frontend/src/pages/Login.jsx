@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 
 import "../styles/login.css";
+import fundo from "../assets/scm.jpg";
 
 function Login({ onLogin, onSolicitarCadastro }) {
   const [email, setEmail] = useState("");
@@ -39,7 +40,12 @@ function Login({ onLogin, onSolicitarCadastro }) {
   return (
     <main className="login-page">
       {/* Imagem de fundo */}
-      <div className="login-background" />
+      <div
+        className="login-background"
+        style={{
+          backgroundImage: `url(${fundo})`,
+        }}
+      />
 
       {/* Overlay escuro */}
       <div className="login-overlay" />
@@ -223,7 +229,7 @@ function Login({ onLogin, onSolicitarCadastro }) {
             <p>
               Primeiro acesso?{" "}
 
-              <button 
+              <button
                 type="button"
                 className="forgot-password"
                 onClick={onSolicitarCadastro}
