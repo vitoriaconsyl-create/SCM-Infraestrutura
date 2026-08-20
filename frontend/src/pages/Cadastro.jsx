@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import "../styles/cadastro.css";
+import fundo from "../assets/scm.jpg";
 
 function formatCPF(value) {
   const digits = value.replace(/\D/g, "").slice(0, 11);
@@ -161,7 +162,12 @@ function Cadastro({ onVoltar, onCadastroSucesso }) {
 
       {/* Imagem de fundo */}
 
-      <div className="cadastro-background" />
+      <div
+        className="cadastro-background"
+        style={{
+          backgroundImage: `url(${fundo})`,
+        }}
+      />
 
       {/* Overlay */}
 
