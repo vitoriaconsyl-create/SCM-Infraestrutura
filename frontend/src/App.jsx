@@ -7,7 +7,7 @@ import RegistrarOcorrencia from "./pages/RegistrarOcorrencia.jsx";
 import MapaOcorrencias from "./pages/MapaOcorrencias.jsx";
 import MinhasOcorrencias from "./pages/MinhasOcorrencias.jsx";
 import AcompanharOcorrencias from "./pages/AcompanharOcorrencias.jsx";
-import TelaInicialAdmin from "./pages/telaInicialAdmin.jsx";
+import TelaInicialAdmin from "./pages/TelaInicialAdmin.jsx";
 
 function App() {
 
