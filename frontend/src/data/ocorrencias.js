@@ -83,5 +83,4 @@ const ocorrencias = [
     longitude: -41.95348,
   },
 ];
-
 export default ocorrencias;
