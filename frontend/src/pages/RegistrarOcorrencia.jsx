@@ -69,9 +69,12 @@ function RegistrarOcorrencia({
   const [form, setForm] = useState({
     tipo: "",
     endereco: "",
+    bairro: "",
     complemento: "",
     descricao: "",
     urgencia: "",
+    latitude: null,
+    longitude: null,
   });
 
   const [errors, setErrors] = useState({});
@@ -102,34 +105,40 @@ function RegistrarOcorrencia({
     }
   }
 
-
-
   function usarGPS() {
     setGpsLoading(true);
 
     if (!navigator.geolocation) {
+      setGpsLoading(false);
+
       atualizarCampo(
         "endereco",
-        "Rua das Flores, 142 - Centro"
+        "Localização não disponível"
       );
-      setGpsLoading(false);
+
       return;
     }
 
     navigator.geolocation.getCurrentPosition(
-      () => {
+      (posicao) => {
+        const { latitude, longitude } = posicao.coords;
+
+        atualizarCampo("latitude", latitude);
+        atualizarCampo("longitude", longitude);
+
         atualizarCampo(
           "endereco",
-          "Rua das Flores, 142 - Centro (GPS)"
+          `Localização GPS: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}`
         );
+
         setGpsLoading(false);
       },
       () => {
-        atualizarCampo(
-          "endereco",
-          "Rua das Flores, 142 - Centro"
-        );
         setGpsLoading(false);
+
+        alert(
+          "Não foi possível obter sua localização."
+        );
       }
     );
   }
@@ -165,6 +174,17 @@ function RegistrarOcorrencia({
 
     if (!form.endereco)
       novo.endereco = "Informe o endereço.";
+
+    if (!form.bairro)
+      novo.bairro = "Informe o bairro.";
+    {
+      errors.bairro && (
+        <p className="error">
+          <AlertCircle size={16} />
+          {errors.bairro}
+        </p>
+      )
+    }
 
     if (form.descricao.length < 20)
       novo.descricao =
@@ -205,9 +225,12 @@ function RegistrarOcorrencia({
     setForm({
       tipo: "",
       endereco: "",
+      bairro: "",
       complemento: "",
       descricao: "",
       urgencia: "",
+      latitude: null,
+      longitude: null,
     });
   }
 
@@ -233,7 +256,7 @@ function RegistrarOcorrencia({
 
         </div>
 
-                {submitted ? (
+        {submitted ? (
 
           <section className="success-card">
 
@@ -307,9 +330,8 @@ function RegistrarOcorrencia({
                     <button
                       key={tipo.value}
                       type="button"
-                      className={`tipo-card ${
-                        form.tipo === tipo.value ? "selected" : ""
-                      }`}
+                      className={`tipo-card ${form.tipo === tipo.value ? "selected" : ""
+                        }`}
                       onClick={() =>
                         atualizarCampo("tipo", tipo.value)
                       }
@@ -401,6 +423,21 @@ function RegistrarOcorrencia({
                   </p>
 
                 )}
+                <label>
+                  Bairro
+                </label>
+
+                <input
+                  type="text"
+                  placeholder="Informe o bairro"
+                  value={form.bairro}
+                  onChange={(e) =>
+                    atualizarCampo(
+                      "bairro",
+                      e.target.value
+                    )
+                  }
+                />
 
                 <label>
                   Complemento
@@ -488,11 +525,10 @@ function RegistrarOcorrencia({
                       <button
                         key={item.value}
                         type="button"
-                        className={`urgencia-card ${
-                          form.urgencia === item.value
-                            ? item.classe
-                            : ""
-                        }`}
+                        className={`urgencia-card ${form.urgencia === item.value
+                          ? item.classe
+                          : ""
+                          }`}
                         onClick={() =>
                           atualizarCampo(
                             "urgencia",
@@ -533,7 +569,7 @@ function RegistrarOcorrencia({
 
               </section>
 
-                            {/* Foto */}
+              {/* Foto */}
 
               <section className="form-card">
 
