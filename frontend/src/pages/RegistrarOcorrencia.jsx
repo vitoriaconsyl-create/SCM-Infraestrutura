@@ -177,14 +177,6 @@ function RegistrarOcorrencia({
 
     if (!form.bairro)
       novo.bairro = "Informe o bairro.";
-    {
-      errors.bairro && (
-        <p className="error">
-          <AlertCircle size={16} />
-          {errors.bairro}
-        </p>
-      )
-    }
 
     if (form.descricao.length < 20)
       novo.descricao =
@@ -438,6 +430,15 @@ function RegistrarOcorrencia({
                     )
                   }
                 />
+                {
+                  errors.bairro && (
+                    <p className="error">
+                      <AlertCircle size={16} />
+                      {errors.bairro}
+                    </p>
+                  )
+                }
+
 
                 <label>
                   Complemento
