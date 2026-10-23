@@ -1,7 +1,4 @@
-/* =========================================================
-   CADASTRO
-   SCM INFRAESTRUTURA
-========================================================= */
+/* CADASTRO SCM INFRAESTRUTURA */
 
 .cadastro-page {
   position: relative;
@@ -20,9 +17,7 @@
 }
 
 
-/* =========================================================
-   FUNDO
-========================================================= */
+/* FUNDO */
 
 .cadastro-background {
   position: fixed;
@@ -37,9 +32,7 @@
 }
 
 
-/* =========================================================
-   OVERLAY
-========================================================= */
+/*  OVERLAY  */
 
 .cadastro-overlay {
   position: fixed;
@@ -532,6 +525,17 @@
   text-decoration: underline;
 }
 
+
+/* Identificação dos campos obrigatórios */
+.campo-obrigatorio {
+    color: #dc2626;
+    font-weight: 700;
+    margin-left: 2px;
+}
+.legenda-obrigatorio {
+    font-size: 0.8rem;
+    margin-top: 8px;
+}
 
 /* =========================================================
    TELA DE SUCESSO

@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import Header from "../components/Header.jsx";
+import { apiRequest } from "../services/api";
 
 import {
   ArrowLeft,
@@ -15,12 +15,35 @@ import {
   Info,
 } from "lucide-react";
 
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  CircleMarker,
+  useMapEvents,
+} from "react-leaflet";
+
 import "../styles/registrarOcorrencia.css";
+
+
+function CapturarCliqueMapa({ onSelecionar }) {
+  useMapEvents({
+    click(evento) {
+      onSelecionar({
+        latitude: evento.latlng.lat,
+        longitude: evento.latlng.lng,
+      });
+    },
+  });
+
+  return null;
+}
 
 function RegistrarOcorrencia({
   onVoltar,
   onLogout,
-  userName
+  userName,
+  token
 }) {
 
   const TIPOS = [
@@ -84,7 +107,8 @@ function RegistrarOcorrencia({
   const [imageName, setImageName] = useState("");
 
   const [gpsLoading, setGpsLoading] = useState(false);
-
+  const [mostrarMapa, setMostrarMapa] = useState(false);
+  const [localSelecionado, setLocalSelecionado] = useState(null);
   const [submitted, setSubmitted] = useState(false);
 
   const [protocol, setProtocol] = useState("");
@@ -106,41 +130,16 @@ function RegistrarOcorrencia({
   }
 
   function usarGPS() {
-    setGpsLoading(true);
-
-    if (!navigator.geolocation) {
-      setGpsLoading(false);
-
-      atualizarCampo(
-        "endereco",
-        "Localização não disponível"
-      );
-
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (posicao) => {
-        const { latitude, longitude } = posicao.coords;
-
-        atualizarCampo("latitude", latitude);
-        atualizarCampo("longitude", longitude);
-
-        atualizarCampo(
-          "endereco",
-          `Localização GPS: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}`
-        );
-
-        setGpsLoading(false);
-      },
-      () => {
-        setGpsLoading(false);
-
-        alert(
-          "Não foi possível obter sua localização."
-        );
-      }
+    setLocalSelecionado(
+      form.latitude !== null && form.longitude !== null
+        ? {
+          latitude: Number(form.latitude),
+          longitude: Number(form.longitude),
+        }
+        : null
     );
+
+    setMostrarMapa(true);
   }
 
   function selecionarImagem(e) {
@@ -190,17 +189,52 @@ function RegistrarOcorrencia({
     return Object.keys(novo).length === 0;
   }
 
-  function enviar(e) {
+  async function enviar(e) {
     e.preventDefault();
 
     if (!validar()) return;
 
-    const numero =
-      Math.floor(Math.random() * 90000) + 10000;
+    if (!token) {
+      alert("Sua sessão expirou. Faça login novamente.");
+      return;
+    }
 
-    setProtocol(`SCM-${numero}`);
+    try {
+      const dados = await apiRequest(
+        "/ocorrencias",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            descricao: form.descricao.trim(),
+            categoria: form.tipo,
+            endereco: form.endereco.trim(),
+            bairro: form.bairro.trim(),
+            complemento: form.complemento.trim() || null,
+            latitude: form.latitude ?? null,
+            longitude: form.longitude ?? null,
+            imagem: image || null,
+            prioridade: form.urgencia
+          })
+        },
+        token
+      );
 
-    setSubmitted(true);
+      if (!dados?.protocolo) {
+        throw new Error(
+          "A ocorrência foi enviada mas o protocolo não foi retornado pela API."
+        );
+      }
+
+      setProtocol(dados.protocolo);
+      setSubmitted(true);
+    } catch (erro) {
+      console.error("Erro ao cadastrar ocorrência", erro);
+
+      alert(
+        erro.message ||
+        "Não foi possível cadastrar a ocorrência. Tente novamente."
+      );
+    }
   }
 
   function novaOcorrencia() {
@@ -228,11 +262,6 @@ function RegistrarOcorrencia({
 
   return (
     <div className="registrar-page">
-
-      <Header
-        userName={userName}
-        onLogout={onLogout}
-      />
 
       <main className="registrar-main">
 
@@ -398,12 +427,18 @@ function RegistrarOcorrencia({
                       <MapPin size={18} />
                     )}
 
-                    GPS
+                    Escolher local
 
                   </button>
 
                 </div>
-
+                {form.latitude !== null && form.longitude !== null && (
+                  <p className="localizacao-confirmada">
+                    <CheckCircle2 size={16} />
+                    Local selecionado: {Number(form.latitude).toFixed(6)},{" "}
+                    {Number(form.longitude).toFixed(6)}
+                  </p>
+                )}
                 {errors.endereco && (
 
                   <p className="error">
@@ -690,6 +725,119 @@ function RegistrarOcorrencia({
         )}
 
       </main>
+
+      {mostrarMapa && (
+        <div className="seletor-mapa-fundo">
+          <section
+            className="seletor-mapa-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="titulo-seletor-mapa"
+          >
+            <div className="seletor-mapa-cabecalho">
+              <div>
+                <h2 id="titulo-seletor-mapa">
+                  Escolha o local da ocorrência
+                </h2>
+                <p>
+                  Clique no mapa para marcar onde está o problema.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                className="seletor-mapa-fechar"
+                onClick={() => setMostrarMapa(false)}
+                aria-label="Fechar mapa"
+              >
+                <X size={22} />
+              </button>
+            </div>
+
+            <MapContainer
+              center={
+                localSelecionado
+                  ? [
+                    localSelecionado.latitude,
+                    localSelecionado.longitude,
+                  ]
+                  : [-5.8045377, -41.9546133]
+              }
+              zoom={16}
+              scrollWheelZoom={true}
+              className="seletor-mapa"
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+
+              <CapturarCliqueMapa
+                onSelecionar={setLocalSelecionado}
+              />
+
+              {localSelecionado && (
+                <CircleMarker
+                  center={[
+                    localSelecionado.latitude,
+                    localSelecionado.longitude,
+                  ]}
+                  radius={10}
+                  pathOptions={{
+                    color: "#ffffff",
+                    weight: 3,
+                    fillColor: "#2563eb",
+                    fillOpacity: 1,
+                  }}
+                />
+              )}
+            </MapContainer>
+
+            <div className="seletor-mapa-rodape">
+              {localSelecionado ? (
+                <p>
+                  Local selecionado:{" "}
+                  {localSelecionado.latitude.toFixed(6)},{" "}
+                  {localSelecionado.longitude.toFixed(6)}
+                </p>
+              ) : (
+                <p>Nenhum local selecionado.</p>
+              )}
+
+              <div className="seletor-mapa-botoes">
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={() => setMostrarMapa(false)}
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  type="button"
+                  className="btn-primary"
+                  disabled={!localSelecionado}
+                  onClick={() => {
+                    atualizarCampo(
+                      "latitude",
+                      localSelecionado.latitude
+                    );
+
+                    atualizarCampo(
+                      "longitude",
+                      localSelecionado.longitude
+                    );
+
+                    setMostrarMapa(false);
+                  }}
+                >
+                  Confirmar local
+                </button>
+              </div>
+            </div>
+          </section>
+        </div>
+      )}
 
     </div>
 

@@ -15,6 +15,7 @@ import {
 
 import "../styles/cadastro.css";
 import fundo from "../assets/scm.jpg";
+import { apiRequest } from "../services/api";
 
 function formatCPF(value) {
   const digits = value.replace(/\D/g, "").slice(0, 11);
@@ -69,6 +70,8 @@ function Cadastro({ onVoltar, onCadastroSucesso }) {
   const [sucesso, setSucesso] = useState(false);
 
   const [submitError, setSubmitError] = useState(false);
+
+  const [enviando, setEnviando] = useState(false);
 
   const handleChange = (field, value) => {
     let formatted = value;
@@ -139,12 +142,32 @@ function Cadastro({ onVoltar, onCadastroSucesso }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (event) => {
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     setSubmitError(false);
 
-    if (validate()) {
+    if (!validate()) {
+      setSubmitError(true);
+      return;
+    }
+
+    setEnviando(true);
+
+    try {
+      await apiRequest("/usuarios", {
+        method: "POST",
+        body: JSON.stringify({
+          nome: form.nome.trim(),
+          email: form.email.trim(),
+          senha: form.senha,
+          cpf: form.cpf.replace(/\D/g, ""),
+          telefone: form.telefone.replace(/\D/g, ""),
+          bairro: form.bairro.trim(),
+        }),
+      });
+
       setSucesso(true);
 
       setTimeout(() => {
@@ -152,8 +175,16 @@ function Cadastro({ onVoltar, onCadastroSucesso }) {
           onCadastroSucesso();
         }
       }, 2500);
-    } else {
+    } catch (erro) {
       setSubmitError(true);
+
+      setErrors((errosAnteriores) => ({
+        ...errosAnteriores,
+        geral:
+          erro.message || "Não foi possível realizar o cadastro.",
+      }));
+    } finally {
+      setEnviando(false);
     }
   };
 
@@ -216,16 +247,21 @@ function Cadastro({ onVoltar, onCadastroSucesso }) {
               </button>
 
               <h2>
-                Solicitar Cadastro
+                Realizar Cadastro
               </h2>
 
             </div>
 
             <p>
-              Preencha os dados abaixo para solicitar
+              Preencha os dados abaixo para obter
               acesso à plataforma
             </p>
 
+            <p className="legenda-obrigatorio">
+              <span className="campo-obrigatorio">*</span>
+              {" "}Campos obrigatórios
+            </p>
+            
           </div>
 
           {/* Sucesso */}
@@ -243,13 +279,13 @@ function Cadastro({ onVoltar, onCadastroSucesso }) {
               <div className="success-content">
 
                 <p className="success-title">
-                  Solicitação enviada!
+                  Cadastro realizado com sucesso!
                 </p>
 
                 <p className="success-description">
-                  Seu cadastro será analisado pela
-                  equipe da prefeitura. Você receberá
-                  um e-mail de confirmação em breve.
+                  Seu cadastro foi realizado com sucesso.
+                  Agora você pode acessar a plataforma usando
+                  seu e-mail e sua senha.
                 </p>
 
               </div>
@@ -270,26 +306,22 @@ function Cadastro({ onVoltar, onCadastroSucesso }) {
               {/* Erro geral */}
 
               {submitError && (
-
                 <div className="cadastro-alert">
-
                   <AlertCircle size={16} />
-
                   <span>
-                    Corrija os campos destacados
-                    antes de continuar.
+                    {errors.geral ||
+                      "Corrija os campos destacados antes de continuar."}
                   </span>
-
                 </div>
-
               )}
+
 
               {/* Nome */}
 
               <div className="cadastro-field">
 
                 <label htmlFor="nome">
-                  Nome Completo
+                  Nome Completo <span className="campo-obrigatorio">*</span>
                 </label>
 
                 <div className="cadastro-input-wrapper">
@@ -332,7 +364,7 @@ function Cadastro({ onVoltar, onCadastroSucesso }) {
               <div className="cadastro-field">
 
                 <label htmlFor="cpf">
-                  CPF
+                  CPF <span className="campo-obrigatorio">*</span>
                 </label>
 
                 <div className="cadastro-input-wrapper">
@@ -374,7 +406,7 @@ function Cadastro({ onVoltar, onCadastroSucesso }) {
               <div className="cadastro-field">
 
                 <label htmlFor="email">
-                  E-mail
+                  E-mail <span className="campo-obrigatorio">*</span>
                 </label>
 
                 <div className="cadastro-input-wrapper">
@@ -417,7 +449,7 @@ function Cadastro({ onVoltar, onCadastroSucesso }) {
               <div className="cadastro-field">
 
                 <label htmlFor="telefone">
-                  Telefone / WhatsApp
+                  Telefone / WhatsApp <span className="campo-obrigatorio">*</span>
                 </label>
 
                 <div className="cadastro-input-wrapper">
@@ -460,7 +492,7 @@ function Cadastro({ onVoltar, onCadastroSucesso }) {
               <div className="cadastro-field">
 
                 <label htmlFor="bairro">
-                  Bairro / Localidade
+                  Bairro / Localidade <span className="campo-obrigatorio">*</span>
                 </label>
 
                 <div className="cadastro-input-wrapper">
@@ -503,7 +535,7 @@ function Cadastro({ onVoltar, onCadastroSucesso }) {
               <div className="cadastro-field">
 
                 <label htmlFor="senha">
-                  Senha
+                  Senha <span className="campo-obrigatorio">*</span>
                 </label>
 
                 <div className="cadastro-input-wrapper">
@@ -570,7 +602,7 @@ function Cadastro({ onVoltar, onCadastroSucesso }) {
               <div className="cadastro-field">
 
                 <label htmlFor="confirmarSenha">
-                  Confirmar Senha
+                  Confirmar Senha <span className="campo-obrigatorio">*</span>
                 </label>
 
                 <div className="cadastro-input-wrapper">
@@ -639,8 +671,9 @@ function Cadastro({ onVoltar, onCadastroSucesso }) {
               <button
                 type="submit"
                 className="cadastro-submit"
+                disabled={enviando}
               >
-                Enviar Solicitação
+                {enviando ? "Cadastrando..." : "Confirmar cadastro"}
               </button>
 
               {/* Login */}

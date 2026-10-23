@@ -42,7 +42,10 @@ const criarUsuario = async (dados) => {
         nome,
         email,
         senha,
-        tipo
+        tipo,
+        cpf,
+        telefone,
+        bairro
     } = dados;
 
     const resultado = await pool.query(
@@ -52,16 +55,22 @@ const criarUsuario = async (dados) => {
             nome,
             email,
             senha,
-            tipo
+            tipo,
+            cpf,
+            telefone,
+            bairro
         )
-        VALUES ($1, $2, $3, $4)
-        RETURNING id, nome, email, tipo
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        RETURNING id, nome, email, tipo, cpf, telefone, bairro
         `,
         [
             nome,
             email,
             senha,
-            tipo
+            tipo,
+            cpf,
+            telefone,
+            bairro
         ]
     );
 

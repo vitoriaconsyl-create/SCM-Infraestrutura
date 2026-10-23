@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 
 import Login from "./pages/Login.jsx";
@@ -5,242 +6,164 @@ import Cadastro from "./pages/Cadastro.jsx";
 import TelaInicial from "./pages/TelaInicial.jsx";
 import RegistrarOcorrencia from "./pages/RegistrarOcorrencia.jsx";
 import MapaOcorrencias from "./pages/MapaOcorrencias.jsx";
-import MinhasOcorrencias from "./pages/MinhasOcorrencias.jsx";
 import AcompanharOcorrencias from "./pages/AcompanharOcorrencias.jsx";
 import TelaInicialAdmin from "./pages/TelaInicialAdmin.jsx";
 import GerenciarOcorrenciasAdmin from "./pages/GerenciarOcorrenciasAdmin.jsx";
 import MapaAdmin from "./pages/MapaAdmin.jsx";
 import EmitirRelatorios from "./pages/EmitirRelatorios.jsx";
 
-function App() {
+import Header from "./components/Header.jsx";
 
+function App() {
   const [screen, setScreen] = useState("login");
+  const [token, setToken] = useState(null);
+  const [usuario, setUsuario] = useState(null);
+
+  function sair() {
+    setToken(null);
+    setUsuario(null);
+    setScreen("login");
+  }
 
   const handleCadastroSucesso = () => {
     setScreen("login");
   };
 
-  /* =====================================================
-     CADASTRO
-  ===================================================== */
+  let conteudo;
+  let exibirHeaderCidadao = false;
 
   if (screen === "cadastro") {
-
-    return (
+    conteudo = (
       <Cadastro
         onVoltar={() => setScreen("login")}
         onCadastroSucesso={handleCadastroSucesso}
       />
     );
+  } else if (screen === "registrarOcorrencia") {
+    exibirHeaderCidadao = true;
 
-  }
-
-  /* =====================================================
-     REGISTRAR OCORRÊNCIA
-  ===================================================== */
-
-  if (screen === "registrarOcorrencia") {
-
-    return (
+    conteudo = (
       <RegistrarOcorrencia
+        token={token}
+        userName={usuario?.nome}
         onVoltar={() => setScreen("telaInicial")}
+        onLogout={sair}
       />
     );
+  } else if (screen === "mapaOcorrencias") {
+    exibirHeaderCidadao = true;
 
-  }
-
-  /* =====================================================
-     MAPA DE OCORRÊNCIAS DO CIDADÃO
-  ===================================================== */
-
-  if (screen === "mapaOcorrencias") {
-
-    return (
+    conteudo = (
       <MapaOcorrencias
-        userName="João Silva"
+        token={token}
+        userName={usuario?.nome || "Cidadão"}
         onVoltar={() => setScreen("telaInicial")}
-        onLogout={() => setScreen("login")}
+        onLogout={sair}
       />
     );
+  } else if (screen === "acompanharOcorrencias") {
+    exibirHeaderCidadao = true;
 
-  }
-
-  /* =====================================================
-     MINHAS OCORRÊNCIAS
-  ===================================================== */
-
-  if (screen === "minhasOcorrencias") {
-
-    return (
-      <MinhasOcorrencias
-        onVoltar={() => setScreen("telaInicial")}
-        onLogout={() => setScreen("login")}
-        userName="João Silva"
-      />
-    );
-
-  }
-
-  /* =====================================================
-     ACOMPANHAR OCORRÊNCIAS
-  ===================================================== */
-
-  if (screen === "acompanharOcorrencias") {
-
-    return (
+    conteudo = (
       <AcompanharOcorrencias
+        token={token}
+        usuario={usuario}
         onVoltar={() => setScreen("telaInicial")}
-        onLogout={() => setScreen("login")}
+        onLogout={sair}
       />
     );
+  } else if (screen === "telaInicial") {
+    exibirHeaderCidadao = true;
 
-  }
-
-  /* =====================================================
-     TELA INICIAL DO CIDADÃO
-  ===================================================== */
-
-  if (screen === "telaInicial") {
-
-    return (
+    conteudo = (
       <TelaInicial
-
-        onLogout={() =>
-          setScreen("login")
-        }
-
+        token={token}
+        usuario={usuario}
+        onLogout={sair}
         onRegistrarOcorrencia={() =>
           setScreen("registrarOcorrencia")
         }
-
         onVisualizarMapa={() =>
           setScreen("mapaOcorrencias")
         }
-
-        onMinhasOcorrencias={() =>
-          setScreen("minhasOcorrencias")
-        }
-
         onAcompanharOcorrencias={() =>
           setScreen("acompanharOcorrencias")
         }
-
       />
     );
-
-  }
-
-  /* =====================================================
-     TELA INICIAL DO ADMINISTRADOR
-  ===================================================== */
-
-  if (screen === "telaInicialAdmin") {
-
-    return (
+  } else if (screen === "telaInicialAdmin") {
+    conteudo = (
       <TelaInicialAdmin
-
-        onLogout={() =>
-          setScreen("login")
-        }
-
+        onLogout={sair}
         onGerenciarOcorrencias={() =>
           setScreen("gerenciarOcorrencias")
         }
-
         onVisualizarMapa={() =>
           setScreen("mapaAdmin")
         }
-
         onRelatorios={() =>
           setScreen("relatorios")
         }
-
       />
     );
+  } else if (screen === "gerenciarOcorrencias") {
+    conteudo = (
+      <GerenciarOcorrenciasAdmin
+        userName="Maria Oliveira"
+        onVoltar={() => setScreen("telaInicialAdmin")}
+        onLogout={sair}
+      />
+    );
+  } else if (screen === "mapaAdmin") {
+    conteudo = (
+      <MapaAdmin
+        onVoltar={() => setScreen("telaInicialAdmin")}
+        onLogout={sair}
+        userName="Administrador"
+      />
+    );
+  } else if (screen === "relatorios") {
+    conteudo = (
+      <EmitirRelatorios
+        userName="Maria Oliveira"
+        onVoltar={() => setScreen("telaInicialAdmin")}
+        onLogout={sair}
+      />
+    );
+  } else {
+    conteudo = (
+      <Login
+        onLogin={(dadosUsuario, tokenRecebido) => {
+          setUsuario(dadosUsuario);
+          setToken(tokenRecebido);
 
+          if (
+            dadosUsuario.tipo === "admin" ||
+            dadosUsuario.tipo === "administrador"
+          ) {
+            setScreen("telaInicialAdmin");
+          } else {
+            setScreen("telaInicial");
+          }
+        }}
+        onSolicitarCadastro={() => setScreen("cadastro")}
+      />
+    );
   }
 
-  /* =====================================================
-   GERENCIAR OCORRÊNCIAS - ADMINISTRADOR
-===================================================== */
-
-if (screen === "gerenciarOcorrencias") {
-
   return (
-    <GerenciarOcorrenciasAdmin
-
-      userName="Maria Oliveira"
-
-      onVoltar={() =>
-        setScreen("telaInicialAdmin")
-      }
-
-      onLogout={() =>
-        setScreen("login")
-      }
-
-    />
-  );
-
-}
-/* Mapa Admin */
-if (screen === "mapaAdmin") {
-    return (
-        <MapaAdmin
-            onVoltar={() => setScreen("telaInicialAdmin")}
-            onLogout={() => setScreen("login")}
-            userName="Administrador"
+    <>
+      {exibirHeaderCidadao && (
+        <Header
+          userName={usuario?.nome || "Cidadão"}
+          userRole="Cidadão"
+          onLogout={sair}
         />
-    );
-}
-/* =====================================================
-   EMITIR RELATÓRIOS - ADMINISTRADOR
-===================================================== */
+      )}
 
-if (screen === "relatorios") {
-
-  return (
-    <EmitirRelatorios
-      userName="Maria Oliveira"
-
-      onVoltar={() =>
-        setScreen("telaInicialAdmin")
-      }
-
-      onLogout={() =>
-        setScreen("login")
-      }
-    />
+      {conteudo}
+    </>
   );
-
-}
-  /* LOGIN */
-
-  return (
-    <Login
-
-      onLogin={(role) => {
-
-        console.log(
-          "Perfil selecionado:",
-          role
-        );
-
-        if (role === "admin") {
-          setScreen("telaInicialAdmin");
-        } else {
-          setScreen("telaInicial");
-        }
-
-      }}
-
-      onSolicitarCadastro={() =>
-        setScreen("cadastro")
-      }
-
-    />
-  );
-
 }
 
 export default App;

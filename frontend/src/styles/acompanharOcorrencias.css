@@ -206,6 +206,59 @@
     margin-top: 16px;
 }
 
+
+.acompanhar-status-analise {
+    background: #f5f3ff;
+    color: #6d28d9;
+    border: 1px solid #ddd6fe;
+}
+
+.acompanhar-status-cancelado {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+.acompanhar-mensagem,
+.acompanhar-vazio {
+    padding: 28px 22px;
+    text-align: center;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    color: #475569;
+}
+
+.acompanhar-mensagem-erro {
+    border-color: #fecaca;
+    color: #b91c1c;
+}
+
+.acompanhar-mensagem-erro button {
+    margin-top: 10px;
+    padding: 9px 15px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: #ffffff;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.acompanhar-vazio svg {
+    color: #94a3b8;
+}
+
+.acompanhar-vazio h3 {
+    margin: 12px 0 8px;
+    color: #0f172a;
+}
+
+.acompanhar-vazio p {
+    margin: 0;
+    line-height: 1.6;
+}
+
 @media (max-width: 700px) {
 
     .acompanhar-main {
@@ -242,4 +295,158 @@
     .acompanhar-linha {
         margin-top: 14px;
     }
+}
+
+
+/* Área dos botões de ação */
+.acompanhar-acoes {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-left: auto;
+}
+
+/* Estilo comum dos botões */
+.acompanhar-botao-editar,
+.acompanhar-botao-excluir {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 9px 13px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background-color 0.2s ease,
+                border-color 0.2s ease,
+                color 0.2s ease;
+}
+
+/* Botão Editar */
+.acompanhar-botao-editar {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+}
+
+.acompanhar-botao-editar:hover {
+    background: #dbeafe;
+    border-color: #93c5fd;
+}
+
+/* Botão Excluir */
+.acompanhar-botao-excluir {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+.acompanhar-botao-excluir:hover {
+    background: #fee2e2;
+    border-color: #fca5a5;
+}
+
+/* Ajustes para telas menores */
+@media (max-width: 700px) {
+    .acompanhar-acoes {
+        width: 100%;
+        margin-left: 0;
+        justify-content: flex-start;
+    }
+
+    .acompanhar-botao-editar,
+    .acompanhar-botao-excluir {
+        padding: 9px 12px;
+    }
+}
+
+
+.acompanhar-form-edicao {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+    padding: 22px;
+    background: #f8fafc;
+    border: 1px solid #dbeafe;
+    border-radius: 12px;
+}
+
+.acompanhar-form-edicao h4 {
+    margin: 0 0 8px;
+    color: #0f172a;
+    font-size: 17px;
+}
+
+.acompanhar-form-edicao label {
+    color: #334155;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.acompanhar-form-edicao input,
+.acompanhar-form-edicao select,
+.acompanhar-form-edicao textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #0f172a;
+    font: inherit;
+    font-size: 14px;
+}
+
+.acompanhar-form-edicao input:focus,
+.acompanhar-form-edicao select:focus,
+.acompanhar-form-edicao textarea:focus {
+    outline: 2px solid #bfdbfe;
+    border-color: #2563eb;
+}
+
+.acompanhar-form-edicao textarea {
+    resize: vertical;
+}
+
+.acompanhar-form-botoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.acompanhar-form-botoes button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.acompanhar-botao-cancelar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 9px 13px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #475569;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.acompanhar-botao-cancelar:hover {
+    background: #f1f5f9;
+}
+
+.acompanhar-form-erro {
+    margin: 5px 0;
+    color: #b91c1c;
+    font-size: 13px;
 }

@@ -17,7 +17,6 @@ import {
   X,
 } from "lucide-react";
 
-import Header from "../components/Header.jsx";
 import "../styles/minhasOcorrencias.css";
 
 function MinhasOcorrencias({ onVoltar, onLogout }) {
@@ -195,11 +194,6 @@ function MinhasOcorrencias({ onVoltar, onLogout }) {
 
   return (
     <div className="minhasOcorrencias">
-
-      <Header
-        userName={userName}
-        onLogout={onLogout}
-      />
 
       <main className="minhasOcorrenciasMain">
 

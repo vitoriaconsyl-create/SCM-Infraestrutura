@@ -55,43 +55,107 @@ const listarOcorrenciasDoUsuario = async (req, res) => {
     }
 };
 
+
+const listarMinhasOcorrencias = async (req, res) => {
+    try {
+        const usuarioId = req.usuario.id;
+
+        const ocorrencias =
+            await usuarioRepository.listarOcorrenciasDoUsuario(usuarioId);
+
+        return res.status(200).json(ocorrencias);
+    } catch (erro) {
+        console.error("Erro ao buscar minhas ocorrências:", erro);
+
+        return res.status(500).json({
+            erro: "Erro ao buscar suas ocorrências."
+        });
+    }
+};
+
+
 const criarUsuario = async (req, res) => {
     try {
         const {
             nome,
             email,
             senha,
-            tipo
+            cpf,
+            telefone,
+            bairro
         } = req.body;
 
-        if (!nome || !email || !senha) {
+        if (!nome?.trim() ||
+            !email?.trim() ||
+            !senha ||
+            !cpf ||
+            !telefone ||
+            !bairro?.trim()
+        ) {
             return res.status(400).json({
-                erro: "Nome, email e senha são obrigatórios"
+                erro: "Preencha os campos obrigatórios."
+            });
+        }
+
+        const cpfLimpo = cpf.replace(/\D/g, "");
+        const telefoneLimpo = telefone.replace(/\D/g, "");
+
+        if (cpfLimpo.length !== 11) {
+            return res.status(400).json({
+                erro: "O CPF deve conter 11 dígitos."
+            });
+        }
+
+        if (
+            telefoneLimpo.length !== 10 &&
+            telefoneLimpo.length !== 11
+        ) {
+            return res.status(400).json({
+                erro: "Informe um telefone válido."
+            });
+        }
+
+        if (senha.length < 8) {
+            return res.status(400).json({
+                erro: "A senha deve ter pelo menos 8 caracteres."
             });
         }
 
         const senhaHash = await bcrypt.hash(senha, 10);
 
         const dados = {
-            nome,
-            email,
+            nome: nome.trim(),
+            email: email.trim().toLowerCase(),
             senha: senhaHash,
-            tipo: "cidadao"
+            tipo: "cidadao",
+            cpf: cpfLimpo,
+            telefone: telefoneLimpo,
+            bairro: bairro.trim()
         };
 
         const usuario = await usuarioRepository.criarUsuario(dados);
 
-        res.status(201).json(usuario);
+        return res.status(201).json({
+            mensagem: "Cadastro realizado com sucesso.",
+            usuario
+        });
+
     } catch (erro) {
         console.error(erro);
 
         if (erro.code === "23505") {
+            if (erro.constraint === "usuarios_cpf_unique_idx") {
+                return res.status(409).json({
+                    erro: "Já existe um usuário cadastrado com este CPF."
+                });
+            }
+
             return res.status(409).json({
-                erro: "Já existe um usuário cadastrado com este email"
+                erro: "Já existe um usuário cadastrado com este e-mail."
             });
         }
-
-        res.status(500).json({
+        
+        return res.status(500).json({
             erro: "Erro ao cadastrar usuário"
         });
     }
@@ -101,5 +165,6 @@ module.exports = {
     listarUsuarios,
     buscarUsuarioPorId,
     criarUsuario,
-    listarOcorrenciasDoUsuario
+    listarOcorrenciasDoUsuario,
+    listarMinhasOcorrencias
 };

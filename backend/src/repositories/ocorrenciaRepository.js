@@ -140,11 +140,78 @@ const excluirOcorrencia = async (id) => {
     return resultado.rows[0];
 };
 
+const atualizarOcorrenciaDoCidadao = async (id, usuarioId, dados) => {
+    const {
+        descricao,
+        categoria,
+        endereco,
+        bairro,
+        complemento,
+        latitude,
+        longitude,
+        imagem,
+        prioridade
+    } = dados;
+
+    const resultado = await pool.query(
+        `
+        UPDATE ocorrencias
+        SET
+            descricao = $1,
+            categoria = $2,
+            endereco = $3,
+            bairro = $4,
+            complemento = $5,
+            latitude = $6,
+            longitude = $7,
+            imagem = $8,
+            prioridade = $9
+        WHERE
+            id = $10
+            AND usuario_id = $11
+            AND LOWER(REPLACE(status, ' ', '_')) = 'pendente'
+        RETURNING *
+        `,
+        [
+            descricao,
+            categoria,
+            endereco,
+            bairro,
+            complemento,
+            latitude,
+            longitude,
+            imagem,
+            prioridade,
+            id,
+            usuarioId
+        ]
+    );
+
+    return resultado.rows[0];
+};
+
+
+const excluirOcorrenciaDoCidadao = async (id, usuarioId) => {
+    const resultado = await pool.query(
+        `
+        DELETE FROM ocorrencias
+        WHERE id = $1
+          AND usuario_id = $2
+        RETURNING *
+        `,
+        [id, usuarioId]
+    );
+
+    return resultado.rows[0];
+};
+
 module.exports = {
     listarOcorrencias,
     buscarOcorrenciaPorId,
     criarOcorrencia,
     atualizarOcorrencia,
-    excluirOcorrencia
+    excluirOcorrencia,
+    atualizarOcorrenciaDoCidadao,
+    excluirOcorrenciaDoCidadao
 };
 

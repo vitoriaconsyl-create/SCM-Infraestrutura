@@ -10,9 +10,25 @@ const autorizar = require("../middlewares/autorizar");
 
 router.get("/", autenticar, autorizar("administrador"), usuarioController.listarUsuarios);
 
-router.get("/:id/ocorrencias", autenticar, autorizar("administrador"),usuarioController.listarOcorrenciasDoUsuario);
+router.get(
+    "/minhas/ocorrencias",
+    autenticar,
+    usuarioController.listarMinhasOcorrencias
+);
 
-router.get("/:id",  autenticar, autorizar("administrador"), usuarioController.buscarUsuarioPorId);
+router.get(
+    "/:id/ocorrencias",
+    autenticar,
+    autorizar("administrador"),
+    usuarioController.listarOcorrenciasDoUsuario
+);
+
+router.get(
+    "/:id",
+    autenticar,
+    autorizar("administrador"),
+    usuarioController.buscarUsuarioPorId
+);
 
 router.post("/", usuarioController.criarUsuario);
 

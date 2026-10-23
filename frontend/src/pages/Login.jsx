@@ -4,36 +4,80 @@ import {
   Lock,
   Mail,
   AlertCircle,
-  ChevronDown,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 
 import "../styles/login.css";
 import fundo from "../assets/scm.jpg";
+import { apiRequest } from "../services/api";
 
 function Login({ onLogin, onSolicitarCadastro }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSubmit = (event) => {
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!email || !password || !role) {
+    setShowAlert(false);
+    setErrorMessage("");
+
+    if (!email.trim() || !password) {
       setShowAlert(true);
       return;
     }
 
-    setShowAlert(false);
+    try {
+      setLoading(true);
 
-    console.log("Login realizado:", {
-      email,
-      password,
-      role,
-    });
+      const dados = await apiRequest("/auth/login", {
+        method: "POST",
+        body: JSON.stringify({
+          email: email.trim(),
+          senha: password,
+        }),
+      });
+      const tipoUsuario = String(
+        dados.usuario.tipo
+      ).trim().toLowerCase();
 
-    if (onLogin) {
-      onLogin(role);
+      if (
+        tipoUsuario !== "admin" &&
+        tipoUsuario !== "administrador" &&
+        tipoUsuario !== "cidadao"
+      ) {
+        throw new Error(
+          "O perfil deste usuário não é reconhecido pelo sistema."
+        );
+      }
+
+      onLogin(dados.usuario, dados.token);
+      const perfilReal =
+        tipoUsuario === "admin" ||
+          tipoUsuario === "administrador"
+          ? "admin"
+          : tipoUsuario === "cidadao"
+            ? "cidadao"
+            : null;
+
+      if (!perfilReal) {
+        throw new Error(
+          "O perfil deste usuário não é reconhecido pelo sistema."
+        );
+      }
+
+      onLogin(dados.usuario, dados.token);
+    } catch (erro) {
+      setErrorMessage(
+        erro.message || "Não foi possível realizar o login."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -95,49 +139,18 @@ function Login({ onLogin, onSolicitarCadastro }) {
               </div>
             )}
 
-            {/* Perfil */}
-            <div className="form-field">
-
-              <label htmlFor="role">
-                Perfil de Acesso
-              </label>
-
-              <div className="select-wrapper">
-
-                <select
-                  id="role"
-                  value={role}
-                  onChange={(event) =>
-                    setRole(event.target.value)
-                  }
-                >
-                  <option value="">
-                    Selecione seu perfil
-                  </option>
-
-                  <option value="cidadao">
-                    Cidadão
-                  </option>
-
-                  <option value="admin">
-                    Administrador
-                  </option>
-                </select>
-
-                <ChevronDown
-                  className="select-icon"
-                  size={18}
-                />
-
+            {errorMessage && (
+              <div className="login-alert" role="alert">
+                <AlertCircle size={16} />
+                <span>{errorMessage}</span>
               </div>
-
-            </div>
+            )}
 
             {/* E-mail */}
             <div className="form-field">
 
               <label htmlFor="email">
-                E-mail ou Matrícula
+                E-mail
               </label>
 
               <div className="input-wrapper">
@@ -163,32 +176,39 @@ function Login({ onLogin, onSolicitarCadastro }) {
 
             {/* Senha */}
             <div className="form-field">
+              <label htmlFor="password">Senha</label>
 
-              <label htmlFor="password">
-                Senha
-              </label>
-
-              <div className="input-wrapper">
-
-                <Lock
-                  className="input-icon"
-                  size={17}
-                />
+              <div className="input-wrapper password-input-wrapper">
+                <Lock className="input-icon" size={17} />
 
                 <input
                   id="password"
-                  type="password"
-                  placeholder="••••••••"
+                  type={showPassword ? "text" : "password"}
                   value={password}
-                  onChange={(event) =>
-                    setPassword(event.target.value)
-                  }
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder="Digite sua senha"
+                  autoComplete="current-password"
+                  required
                 />
 
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() =>
+                    setShowPassword((atual) => !atual)
+                  }
+                  aria-label={
+                    showPassword ? "Ocultar senha" : "Mostrar senha"
+                  }
+                >
+                  {showPassword ? (
+                    <EyeOff size={20} />
+                  ) : (
+                    <Eye size={20} />
+                  )}
+                </button>
               </div>
-
             </div>
-
             {/* Opções */}
             <div className="login-options">
 
@@ -217,8 +237,9 @@ function Login({ onLogin, onSolicitarCadastro }) {
             <button
               type="submit"
               className="login-submit"
+              disabled={loading}
             >
-              Entrar no Sistema
+              {loading ? "Verificando acesso..." : "Entrar no Sistema"}
             </button>
 
           </form>

@@ -1,15 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { apiRequest } from "../services/api";
+
 import {
-  Building2,
-  LogOut,
   ArrowLeft,
   MapPin,
   AlertCircle,
   Filter,
-  X,
   Clock,
   CheckCircle2,
   Flame,
+  RefreshCw,
 } from "lucide-react";
 
 import {
@@ -23,11 +23,11 @@ import L from "leaflet";
 
 import "leaflet/dist/leaflet.css";
 import "../styles/mapaOcorrencias.css";
+import MarkerClusterGroup from "react-leaflet-cluster";
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 
-
-// =====================================================
 // CENTRO DE SANTA CRUZ DOS MILAGRES
-// =====================================================
 
 const CENTRO = [
   -5.804537713240668,
@@ -35,88 +35,7 @@ const CENTRO = [
 ];
 
 
-// =====================================================
-// OCORRÊNCIAS DE EXEMPLO
-// =====================================================
-
-const OCORRENCIAS = [
-  {
-    id: "001",
-    tipo: "Buraco na via",
-    endereco: "Região central",
-    status: "Em andamento",
-    urgencia: "Alta",
-    data: "20/01/2026",
-    descricao:
-      "Buraco de aproximadamente 1 metro de diâmetro na via, causando dificuldade para a passagem de veículos.",
-    posicao: [-5.8039, -41.9551],
-  },
-
-  {
-    id: "002",
-    tipo: "Iluminação pública",
-    endereco: "Região central",
-    status: "Aguardando",
-    urgencia: "Média",
-    data: "18/01/2026",
-    descricao:
-      "Poste de iluminação pública apagado há vários dias, deixando o trecho sem iluminação durante a noite.",
-    posicao: [-5.8052, -41.9539],
-  },
-
-  {
-    id: "003",
-    tipo: "Lixo acumulado",
-    endereco: "Região central",
-    status: "Urgente",
-    urgencia: "Urgente",
-    data: "21/01/2026",
-    descricao:
-      "Acúmulo de lixo e entulho na lateral da via, prejudicando a circulação de pedestres.",
-    posicao: [-5.8057, -41.9548],
-  },
-
-  {
-    id: "004",
-    tipo: "Calçada danificada",
-    endereco: "Região central",
-    status: "Concluído",
-    urgencia: "Baixa",
-    data: "15/01/2026",
-    descricao:
-      "Trecho da calçada apresentava danos, dificultando a passagem de pedestres.",
-    posicao: [-5.8046, -41.9540],
-  },
-
-  {
-    id: "005",
-    tipo: "Árvore caída",
-    endereco: "Região central",
-    status: "Em andamento",
-    urgencia: "Alta",
-    data: "20/01/2026",
-    descricao:
-      "Árvore caída parcialmente sobre a calçada, dificultando a passagem de pedestres.",
-    posicao: [-5.8035, -41.9544],
-  },
-
-  {
-    id: "006",
-    tipo: "Sinalização danificada",
-    endereco: "Região central",
-    status: "Aguardando",
-    urgencia: "Média",
-    data: "19/01/2026",
-    descricao:
-      "Placa de sinalização danificada e com pouca visibilidade para motoristas.",
-    posicao: [-5.8060, -41.9554],
-  },
-];
-
-
-// =====================================================
 // CONFIGURAÇÃO DOS STATUS
-// =====================================================
 
 const STATUS_CONFIG = {
   Urgente: {
@@ -145,9 +64,7 @@ const STATUS_CONFIG = {
 };
 
 
-// =====================================================
 // FILTROS
-// =====================================================
 
 const FILTROS = [
   "Todos",
@@ -158,9 +75,7 @@ const FILTROS = [
 ];
 
 
-// =====================================================
 // ÍCONE PERSONALIZADO DO LEAFLET
-// =====================================================
 
 function criarIcone(cor, ativo = false) {
   return L.divIcon({
@@ -186,39 +101,143 @@ function criarIcone(cor, ativo = false) {
 }
 
 
-// =====================================================
 // COMPONENTE
-// =====================================================
 
 function MapaOcorrencias({
   onVoltar,
   onLogout,
   userName = "Usuário",
+  token,
 }) {
 
   const [filtro, setFiltro] = useState("Todos");
-
   const [selecionada, setSelecionada] = useState(null);
+  const [ocorrencias, setOcorrencias] = useState([]);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState("");
+  const [atualizacao, setAtualizacao] = useState(0);
+  useEffect(() => {
+    async function carregarOcorrencias() {
+      if (!token) {
+        setErro("Faça login para consultar as ocorrências.");
+        setCarregando(false);
+        return;
+      }
 
+      try {
+        setCarregando(true);
+        setErro("");
 
-  // ===================================================
-  // FILTRAR OCORRÊNCIAS
-  // ===================================================
+        const dados = await apiRequest(
+          "/ocorrencias",
+          { method: "GET" },
+          token
+        );
 
-  const visiveis = OCORRENCIAS.filter((ocorrencia) => {
+        if (!Array.isArray(dados)) {
+          throw new Error("A API retornou um formato inesperado.");
+        }
 
-    if (filtro === "Todos") {
-      return true;
+        setOcorrencias(dados);
+      } catch (erro) {
+        console.error("Erro ao carregar ocorrências:", erro);
+        setErro(
+          erro.message || "Não foi possível carregar as ocorrências."
+        );
+      } finally {
+        setCarregando(false);
+      }
     }
 
-    return ocorrencia.status === filtro;
+    carregarOcorrencias();
+  }, [token, atualizacao]);
 
+  function normalizarStatus(status) {
+    const valor = (status || "").toLowerCase().trim();
+
+    if (["pendente", "aguardando"].includes(valor)) {
+      return "Aguardando";
+    }
+
+    if (["em andamento", "em_andamento"].includes(valor)) {
+      return "Em andamento";
+    }
+
+    if (
+      ["resolvida", "resolvido", "concluída", "concluida",
+        "concluído", "concluido"].includes(valor)
+    ) {
+      return "Concluído";
+    }
+
+    return status || "Aguardando";
+  }
+
+  function normalizarPrioridade(prioridade) {
+    return (prioridade || "baixa")
+      .toLowerCase()
+      .trim();
+  }
+
+  function obterStatusExibido(ocorrencia) {
+    if (normalizarPrioridade(ocorrencia.prioridade) === "urgente") {
+      return "Urgente";
+    }
+
+    return normalizarStatus(ocorrencia.status);
+  }
+
+  function obterPosicao(ocorrencia) {
+    const latitude = Number(ocorrencia.latitude);
+    const longitude = Number(ocorrencia.longitude);
+
+    if (
+      ocorrencia.latitude === null ||
+      ocorrencia.latitude === undefined ||
+      ocorrencia.latitude === "" ||
+      ocorrencia.longitude === null ||
+      ocorrencia.longitude === undefined ||
+      ocorrencia.longitude === "" ||
+      !Number.isFinite(latitude) ||
+      !Number.isFinite(longitude) ||
+      latitude < -90 ||
+      latitude > 90 ||
+      longitude < -180 ||
+      longitude > 180 ||
+      (latitude === 0 && longitude === 0)
+    ) {
+      return null;
+    }
+
+    return [latitude, longitude];
+  }
+
+  function formatarData(data) {
+    if (!data) return "Data não informada";
+
+    const dataConvertida = new Date(data);
+
+    if (Number.isNaN(dataConvertida.getTime())) {
+      return "Data não informada";
+    }
+
+    return dataConvertida.toLocaleDateString("pt-BR");
+  }
+
+  // FILTRAR OCORRÊNCIAS
+
+  const visiveis = ocorrencias.filter((ocorrencia) => {
+    if (filtro === "Todos") return true;
+
+    return obterStatusExibido(ocorrencia) === filtro;
   });
 
+  const ocorrenciasNoMapa = visiveis.filter(
+    (ocorrencia) => obterPosicao(ocorrencia) !== null
+  );
 
-  // ===================================================
+
   // SELECIONAR OCORRÊNCIA
-  // ===================================================
 
   function selecionarOcorrencia(ocorrencia) {
 
@@ -239,72 +258,7 @@ function MapaOcorrencias({
 
     <div className="mapa-page">
 
-
-      {/* =================================================
-          HEADER
-      ================================================= */}
-
-      <header className="mapa-header">
-
-        <div className="header-esquerda">
-
-          <div className="logo-prefeitura">
-
-            <Building2 size={24} />
-
-          </div>
-
-          <div>
-
-            <h1>
-              Sistema de Infraestrutura
-            </h1>
-
-            <p>
-              Prefeitura Municipal de Santa Cruz dos Milagres
-            </p>
-
-          </div>
-
-        </div>
-
-
-        <div className="header-direita">
-
-          <div className="usuario">
-
-            <strong>
-              {userName}
-            </strong>
-
-            <span>
-              Cidadão
-            </span>
-
-          </div>
-
-
-          <button
-            className="botao-sair"
-            onClick={onLogout}
-          >
-
-            <LogOut size={17} />
-
-            <span>
-              Sair
-            </span>
-
-          </button>
-
-        </div>
-
-      </header>
-
-
-      {/* =================================================
-          BARRA DE FILTROS
-      ================================================= */}
+      {/* BARRA DE FILTROS */}
 
       <div className="barra-filtros">
 
@@ -319,7 +273,16 @@ function MapaOcorrencias({
           Voltar ao painel
 
         </button>
-
+        <button
+          type="button"
+          className="botao-voltar"
+          onClick={() => setAtualizacao((valor) => valor + 1)}
+          disabled={carregando}
+          title="Buscar ocorrências atualizadas"
+        >
+          <RefreshCw size={17} />
+          {carregando ? "Atualizando..." : "Atualizar mapa"}
+        </button>
 
         <span className="separador">
           |
@@ -338,11 +301,11 @@ function MapaOcorrencias({
 
             const quantidade =
               item === "Todos"
-                ? OCORRENCIAS.length
-                : OCORRENCIAS.filter(
-                    (ocorrencia) =>
-                      ocorrencia.status === item
-                  ).length;
+                ? ocorrencias.length
+                : ocorrencias.filter(
+                  (ocorrencia) =>
+                    obterStatusExibido(ocorrencia) === item
+                ).length;
 
 
             return (
@@ -382,16 +345,12 @@ function MapaOcorrencias({
       </div>
 
 
-      {/* =================================================
-          CONTEÚDO PRINCIPAL
-      ================================================= */}
+      {/* CONTEÚDO PRINCIPAL */}
 
       <main className="mapa-conteudo">
 
 
-        {/* =================================================
-            MAPA
-        ================================================= */}
+        {/* MAPA */}
 
         <section className="mapa-area">
 
@@ -407,111 +366,114 @@ function MapaOcorrencias({
               attribution="&copy; OpenStreetMap contributors"
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
+            <MarkerClusterGroup
+              chunkedLoading
+              spiderfyOnMaxZoom
+              showCoverageOnHover={false}
+            >
+              {ocorrenciasNoMapa.map((ocorrencia) => {
+                const statusExibido = obterStatusExibido(ocorrencia);
+
+                const config =
+                  STATUS_CONFIG[statusExibido] ||
+                  STATUS_CONFIG["Aguardando"];
+
+                const ativo = selecionada?.id === ocorrencia.id;
+
+                return (
+
+                  <Marker
+                    key={ocorrencia.id}
+                    position={obterPosicao(ocorrencia)}
+                    icon={criarIcone(
+                      config.cor,
+                      ativo
+                    )}
+                    eventHandlers={{
+                      click: () =>
+                        selecionarOcorrencia(
+                          ocorrencia
+                        ),
+                    }}
+                  >
+
+                    <Popup>
+
+                      <div className="popup-ocorrencia">
+
+                        <div className="popup-topo">
+
+                          <div
+                            className="popup-icone"
+                            style={{
+                              backgroundColor:
+                                `${config.cor}20`,
+                              color: config.cor,
+                            }}
+                          >
+
+                            <MapPin size={20} />
+
+                          </div>
 
 
-            {visiveis.map((ocorrencia) => {
+                          <div className="popup-titulo">
 
-              const config =
-                STATUS_CONFIG[ocorrencia.status];
+                            <strong>
+                              #{ocorrencia.protocolo || ocorrencia.id} —{" "}
+                              {ocorrencia.categoria}
+                            </strong>
 
-              const ativo =
-                selecionada?.id === ocorrencia.id;
+                            <span>
+                              {[ocorrencia.bairro, ocorrencia.endereco]
+                                .filter(Boolean)
+                                .join(" - ")}
+                            </span>
 
-
-              return (
-
-                <Marker
-                  key={ocorrencia.id}
-                  position={ocorrencia.posicao}
-                  icon={criarIcone(
-                    config.cor,
-                    ativo
-                  )}
-                  eventHandlers={{
-                    click: () =>
-                      selecionarOcorrencia(
-                        ocorrencia
-                      ),
-                  }}
-                >
-
-                  <Popup>
-
-                    <div className="popup-ocorrencia">
-
-                      <div className="popup-topo">
-
-                        <div
-                          className="popup-icone"
-                          style={{
-                            backgroundColor:
-                              `${config.cor}20`,
-                            color: config.cor,
-                          }}
-                        >
-
-                          <MapPin size={20} />
+                          </div>
 
                         </div>
 
 
-                        <div className="popup-titulo">
+                        <p className="popup-descricao">
 
-                          <strong>
-                            #{ocorrencia.id} —{" "}
-                            {ocorrencia.tipo}
-                          </strong>
+                          {ocorrencia.descricao}
 
-                          <span>
-                            {ocorrencia.endereco}
+                        </p>
+
+
+                        <div className="popup-rodape">
+
+                          <span
+                            className={`badge ${config.classe}`}
+                          >
+
+                            {statusExibido}
+
+                          </span>
+
+                          <span className="popup-data">
+
+                            {formatarData(ocorrencia.criado_em)}
+
                           </span>
 
                         </div>
 
                       </div>
 
+                    </Popup>
 
-                      <p className="popup-descricao">
+                  </Marker>
 
-                        {ocorrencia.descricao}
+                );
 
-                      </p>
-
-
-                      <div className="popup-rodape">
-
-                        <span
-                          className={`badge ${config.classe}`}
-                        >
-
-                          {ocorrencia.status}
-
-                        </span>
-
-                        <span className="popup-data">
-
-                          {ocorrencia.data}
-
-                        </span>
-
-                      </div>
-
-                    </div>
-
-                  </Popup>
-
-                </Marker>
-
-              );
-
-            })}
-
+              })}
+            </MarkerClusterGroup>
           </MapContainer>
 
 
-          {/* =================================================
-              CONTADOR
-          ================================================= */}
+          {/* CONTADOR */}
 
           <div className="contador-mapa">
 
@@ -520,7 +482,7 @@ function MapaOcorrencias({
             </span>
 
             <strong>
-              {visiveis.length}
+              {ocorrenciasNoMapa.length}
             </strong>
 
             <small>
@@ -533,9 +495,7 @@ function MapaOcorrencias({
           </div>
 
 
-          {/* =================================================
-              LEGENDA
-          ================================================= */}
+          {/* LEGENDA */}
 
           <div className="legenda">
 
@@ -585,9 +545,7 @@ function MapaOcorrencias({
         </section>
 
 
-        {/* =================================================
-            SIDEBAR
-        ================================================= */}
+        {/* SIDEBAR */}
 
         <aside className="sidebar-ocorrencias">
 
@@ -613,118 +571,79 @@ function MapaOcorrencias({
 
           </div>
 
-
           <div className="lista-ocorrencias">
-
-
-            {visiveis.map((ocorrencia) => {
-
-              const config =
-                STATUS_CONFIG[ocorrencia.status];
-
-              const Icone =
-                config.Icone;
-
-              const ativo =
-                selecionada?.id === ocorrencia.id;
-
-
-              return (
-
-                <button
-                  key={ocorrencia.id}
-                  className={
-                    ativo
-                      ? "ocorrencia-item selecionada"
-                      : "ocorrencia-item"
-                  }
-                  onClick={() =>
-                    selecionarOcorrencia(
-                      ocorrencia
-                    )
-                  }
-                >
-
-                  <div
-                    className="ocorrencia-icone"
-                    style={{
-                      backgroundColor:
-                        `${config.cor}15`,
-                      color: config.cor,
-                    }}
-                  >
-
-                    <Icone size={17} />
-
-                  </div>
-
-
-                  <div className="ocorrencia-info">
-
-                    <strong>
-
-                      #{ocorrencia.id} —{" "}
-                      {ocorrencia.tipo}
-
-                    </strong>
-
-
-                    <span className="endereco">
-
-                      {ocorrencia.endereco}
-
-                    </span>
-
-
-                    <div className="ocorrencia-detalhes">
-
-                      <span
-                        className={`badge ${config.classe}`}
-                      >
-
-                        {ocorrencia.status}
-
-                      </span>
-
-
-                      <span className="data">
-
-                        {ocorrencia.data}
-
-                      </span>
-
-                    </div>
-
-                  </div>
-
-                </button>
-
-              );
-
-            })}
-
-
-            {visiveis.length === 0 && (
-
+            {carregando ? (
+              <p>Carregando ocorrências...</p>
+            ) : erro ? (
+              <p role="alert">{erro}</p>
+            ) : visiveis.length === 0 ? (
               <div className="nenhuma-ocorrencia">
+                <MapPin size={42} strokeWidth={1.5} />
 
-                <MapPin
-                  size={42}
-                  strokeWidth={1.5}
-                />
-
-                <strong>
-                  Nenhuma ocorrência
-                </strong>
+                <strong>Nenhuma ocorrência</strong>
 
                 <span>
                   Nenhum registro com o filtro selecionado.
                 </span>
-
               </div>
+            ) : (
+              visiveis.map((ocorrencia) => {
+                const statusExibido = obterStatusExibido(ocorrencia);
 
+                const config =
+                  STATUS_CONFIG[statusExibido] ||
+                  STATUS_CONFIG["Aguardando"];
+
+                const Icone = config.Icone;
+
+                const ativo = selecionada?.id === ocorrencia.id;
+
+                return (
+                  <button
+                    key={ocorrencia.id}
+                    className={
+                      ativo
+                        ? "ocorrencia-item selecionada"
+                        : "ocorrencia-item"
+                    }
+                    onClick={() => selecionarOcorrencia(ocorrencia)}
+                  >
+                    <div
+                      className="ocorrencia-icone"
+                      style={{
+                        backgroundColor: `${config.cor}15`,
+                        color: config.cor,
+                      }}
+                    >
+                      <Icone size={17} />
+                    </div>
+
+                    <div className="ocorrencia-info">
+                      <strong>
+                        #{ocorrencia.protocolo || ocorrencia.id} —{" "}
+                        {ocorrencia.categoria}
+                      </strong>
+
+                      <span className="endereco">
+                        {[ocorrencia.bairro, ocorrencia.endereco]
+                          .filter(Boolean)
+                          .join(" — ")}
+                      </span>
+
+                      <div className="ocorrencia-detalhes">
+                        <span className={`badge ${config.classe}`}>
+                          {statusExibido}
+                        </span>
+
+                        <span className="data">
+                          {formatarData(ocorrencia.criado_em)}
+                        </span>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })
             )}
-
           </div>
 
         </aside>
