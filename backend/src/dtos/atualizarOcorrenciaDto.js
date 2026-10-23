@@ -10,7 +10,8 @@ const atualizarOcorrenciaDto = (dados) => {
         latitude: dados.latitude || null,
         longitude: dados.longitude || null,
         imagem: dados.imagem || null,
-        prioridade: dados.prioridade
+        prioridade: dados.prioridade,
+        equipe: dados.equipe || null
     };
 
 };

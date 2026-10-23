@@ -13,6 +13,7 @@ const criarOcorrenciaResponseDto = (ocorrencia) => {
         prioridade: ocorrencia.prioridade,
         protocolo: ocorrencia.protocolo,
         usuario_id: ocorrencia.usuario_id,
+        equipe: ocorrencia.equipe || null,
         criado_em: ocorrencia.criado_em
     };
 };

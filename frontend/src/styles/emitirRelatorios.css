@@ -496,4 +496,35 @@
         width: 100%;
     }
 
+}@media print {
+    .relatorios-voltar,
+    .relatorios-acoes,
+    .relatorios-periodos,
+    .relatorios-final,
+    header {
+        display: none !important;
+    }
+
+    .relatorios-container,
+    .relatorios-main {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        background: #fff;
+    }
+
+    .relatorio-box,
+    .relatorio-card {
+        break-inside: avoid;
+        box-shadow: none;
+    }
+
+    .tabela-container {
+        overflow: visible;
+    }
+
+    body {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
 }

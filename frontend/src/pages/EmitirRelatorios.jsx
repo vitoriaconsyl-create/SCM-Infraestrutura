@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import {
     FileText,
     Calendar,
@@ -13,135 +14,142 @@ import {
 
 import "../styles/emitirRelatorios.css";
 import Header from "../components/Header.jsx";
+import { apiRequest } from "../services/api.js";
 
 function EmitirRelatorios({
     onVoltar,
     onLogout,
     userName,
+    token,
 }) {
-
     const [periodo, setPeriodo] = useState("7d");
+    const [relatorio, setRelatorio] = useState(null);
+    const [carregando, setCarregando] = useState(true);
+    const [erro, setErro] = useState("");
+    const [tentativa, setTentativa] = useState(0);
 
     const periodos = [
-        { label: "Últimos 7 dias", value: "7d" },
-        { label: "Últimos 30 dias", value: "30d" },
-        { label: "Últimos 3 meses", value: "3m" },
-        { label: "Este ano", value: "year" },
+        { label: "Últimos 7 dias", value: "7d", api: "7" },
+        { label: "Últimos 30 dias", value: "30d", api: "30" },
+        { label: "Últimos 3 meses", value: "3m", api: "3meses" },
+        { label: "Este ano", value: "year", api: "ano" },
     ];
 
-    const dados = {
-        "7d": {
-            total: 45,
-            resolvidas: 33,
-            andamento: 8,
-            urgentes: 4,
-
-            tipos: [
-                ["Buraco na via", 8],
-                ["Iluminação", 5],
-                ["Semáforo", 3],
-                ["Calçada", 6],
-                ["Esgoto", 4],
-                ["Lixo", 7],
-                ["Árvore", 2],
-            ],
-
-            bairros: [
-                ["Centro", 12, 8],
-                ["Bairro Novo", 8, 5],
-                ["Zona Sul", 7, 6],
-                ["Vila Esperança", 5, 3],
-                ["Residencial A", 3, 1],
-            ],
-        },
-
-        "30d": {
-            total: 140,
-            resolvidas: 107,
-            andamento: 22,
-            urgentes: 11,
-
-            tipos: [
-                ["Buraco na via", 31],
-                ["Iluminação", 20],
-                ["Semáforo", 11],
-                ["Calçada", 25],
-                ["Esgoto", 16],
-                ["Lixo", 28],
-                ["Árvore", 9],
-            ],
-
-            bairros: [
-                ["Centro", 45, 32],
-                ["Bairro Novo", 28, 20],
-                ["Zona Sul", 22, 18],
-                ["Vila Esperança", 17, 11],
-                ["Residencial A", 10, 7],
-            ],
-        },
-
-        "3m": {
-            total: 418,
-            resolvidas: 321,
-            andamento: 58,
-            urgentes: 39,
-
-            tipos: [
-                ["Buraco na via", 92],
-                ["Iluminação", 64],
-                ["Semáforo", 31],
-                ["Calçada", 75],
-                ["Esgoto", 48],
-                ["Lixo", 82],
-                ["Árvore", 26],
-            ],
-
-            bairros: [
-                ["Centro", 120, 92],
-                ["Bairro Novo", 86, 65],
-                ["Zona Sul", 72, 58],
-                ["Vila Esperança", 55, 42],
-                ["Residencial A", 38, 29],
-            ],
-        },
-
-        "year": {
-            total: 1643,
-            resolvidas: 1289,
-            andamento: 210,
-            urgentes: 144,
-
-            tipos: [
-                ["Buraco na via", 340],
-                ["Iluminação", 245],
-                ["Semáforo", 130],
-                ["Calçada", 280],
-                ["Esgoto", 190],
-                ["Lixo", 330],
-                ["Árvore", 128],
-            ],
-
-            bairros: [
-                ["Centro", 420, 340],
-                ["Bairro Novo", 310, 245],
-                ["Zona Sul", 270, 215],
-                ["Vila Esperança", 220, 180],
-                ["Residencial A", 170, 130],
-            ],
-        },
-    };
-
-    const dadosPeriodo = dados[periodo];
-
-    const periodoSelecionado =
-        periodos.find((item) => item.value === periodo);
-
-    const taxaResolucao = Math.round(
-        (dadosPeriodo.resolvidas / dadosPeriodo.total) * 100
+    const periodoSelecionado = periodos.find(
+        (item) => item.value === periodo
     );
 
+    useEffect(() => {
+        let ativo = true;
+
+        async function carregarRelatorio() {
+            setCarregando(true);
+            setErro("");
+
+            try {
+                if (!token) {
+                    throw new Error(
+                        "Sua sessão não foi identificada. Entre novamente no sistema."
+                    );
+                }
+
+                const dados = await apiRequest(
+                    `/relatorios?periodo=${periodoSelecionado.api}`,
+                    {},
+                    token
+                );
+
+                if (ativo) {
+                    setRelatorio(dados);
+                }
+            } catch (error) {
+                if (ativo) {
+                    setErro(
+                        error.message ||
+                        "Não foi possível carregar os relatórios."
+                    );
+                    setRelatorio(null);
+                }
+            } finally {
+                if (ativo) {
+                    setCarregando(false);
+                }
+            }
+        }
+
+        carregarRelatorio();
+
+        return () => {
+            ativo = false;
+        };
+    }, [periodo, token, tentativa]);
+
     const imprimirRelatorio = () => {
+        const tituloOriginal = document.title;
+
+        document.title = "Relatorio_SCM_Infraestrutura";
+
         window.print();
+
+        document.title = tituloOriginal;
+    };
+
+    const numero = (valor) => Number(valor || 0);
+
+    const resumo = relatorio?.resumo || {};
+    const indicadores = relatorio?.indicadores || {};
+
+    const total = numero(resumo.total);
+    const resolvidas = numero(resumo.resolvidas);
+    const andamento = numero(resumo.em_andamento);
+    const urgentes = numero(indicadores.urgentes_abertas);
+
+    const taxaResolucao = total > 0
+        ? Math.round((resolvidas / total) * 100)
+        : 0;
+
+    const categorias = (relatorio?.categorias || []).map((item) => ({
+        nome: item.categoria || "Sem categoria",
+        total: numero(item.total),
+    }));
+
+    const maiorCategoria = Math.max(
+        1,
+        ...categorias.map((item) => item.total)
+    );
+
+    const bairros = relatorio?.bairros || [];
+    const status = relatorio?.status || [];
+
+    const nomesStatus = {
+        pendente: "Pendente",
+        "em_análise": "Em análise",
+        "em_analise": "Em análise",
+        "em andament": "Em andamento",
+        em_andament: "Em andamento",
+        em_andamento: "Em andamento",
+        "aguardando_peças": "Aguardando peças",
+        aguardando_pecas: "Aguardando peças",
+        concluido: "Concluído",
+        concluida: "Concluído",
+        cancelado: "Cancelado",
+    };
+
+    const nomeCategoria = (categoria) => {
+        const nomes = {
+            buraco: "Buraco na via",
+            iluminacao: "Iluminação",
+            semaforo: "Semáforo",
+            calcada: "Calçada",
+            esgoto: "Esgoto",
+            lixo: "Lixo",
+            arvore: "Árvore",
+            sinalizacao: "Sinalização",
+        };
+
+        const chave = String(categoria || "").toLowerCase();
+
+        return nomes[chave] || categoria || "Sem categoria";
     };
 
     return (
@@ -155,8 +163,6 @@ function EmitirRelatorios({
 
             <main className="relatorios-main">
 
-                {/* Voltar */}
-
                 <button
                     className="relatorios-voltar"
                     onClick={onVoltar}
@@ -165,13 +171,9 @@ function EmitirRelatorios({
                     Voltar ao painel
                 </button>
 
-                {/* Título */}
-
                 <section className="relatorios-topo">
-
                     <div>
-                        <h1>Emitir Relatórios</h1>
-
+                        <h1>Relatório de Ocorrências</h1>
                         <p>
                             Análise estatística das ocorrências —{" "}
                             {periodoSelecionado.label}
@@ -179,10 +181,10 @@ function EmitirRelatorios({
                     </div>
 
                     <div className="relatorios-acoes">
-
                         <button
                             className="relatorios-btn-imprimir"
                             onClick={imprimirRelatorio}
+                            disabled={carregando || !!erro}
                         >
                             <Printer size={17} />
                             Imprimir
@@ -191,23 +193,18 @@ function EmitirRelatorios({
                         <button
                             className="relatorios-btn-exportar"
                             onClick={imprimirRelatorio}
+                            disabled={carregando || !!erro}
                         >
                             <Download size={17} />
                             Exportar PDF
                         </button>
-
                     </div>
-
                 </section>
 
-                {/* Período */}
-
                 <section className="relatorios-periodos">
-
                     <Calendar size={18} />
 
                     {periodos.map((item) => (
-
                         <button
                             key={item.value}
                             className={
@@ -215,317 +212,239 @@ function EmitirRelatorios({
                                     ? "periodo-ativo"
                                     : ""
                             }
-                            onClick={() =>
-                                setPeriodo(item.value)
-                            }
+                            onClick={() => setPeriodo(item.value)}
+                            disabled={carregando}
                         >
                             {item.label}
                         </button>
-
                     ))}
-
                 </section>
 
-                {/* Indicadores */}
+                {carregando && (
+                    <p className="relatorio-mensagem">
+                        Carregando dados do relatório...
+                    </p>
+                )}
 
-                <section className="relatorios-indicadores">
+                {!carregando && erro && (
+                    <section className="relatorio-mensagem relatorio-erro">
+                        <p>{erro}</p>
+                        <button onClick={() => setTentativa((valor) => valor + 1)}>
+                            Tentar novamente
+                        </button>
+                    </section>
+                )}
 
-                    <div className="relatorio-card">
+                {!carregando && !erro && relatorio && (
+                    <>
+                        <section className="relatorios-indicadores">
 
-                        <div>
-                            <span>Total registradas</span>
-                            <strong>{dadosPeriodo.total}</strong>
-                        </div>
+                            <div className="relatorio-card">
+                                <div>
+                                    <span>Total registradas</span>
+                                    <strong>{total}</strong>
+                                </div>
+                                <FileText size={25} />
+                            </div>
 
-                        <FileText size={25} />
+                            <div className="relatorio-card verde">
+                                <div>
+                                    <span>Resolvidas</span>
+                                    <strong>{resolvidas}</strong>
+                                    <small>{taxaResolucao}% de resolução</small>
+                                </div>
+                                <CheckCircle2 size={25} />
+                            </div>
 
-                    </div>
+                            <div className="relatorio-card azul">
+                                <div>
+                                    <span>Em andamento</span>
+                                    <strong>{andamento}</strong>
+                                </div>
+                                <Clock size={25} />
+                            </div>
 
-                    <div className="relatorio-card verde">
+                            <div className="relatorio-card vermelho">
+                                <div>
+                                    <span>Urgentes abertas</span>
+                                    <strong>{urgentes}</strong>
+                                    <small>Requerem atenção</small>
+                                </div>
+                                <AlertCircle size={25} />
+                            </div>
 
-                        <div>
-                            <span>Resolvidas</span>
-                            <strong>{dadosPeriodo.resolvidas}</strong>
-                            <small>
-                                {taxaResolucao}% de resolução
-                            </small>
-                        </div>
+                        </section>
 
-                        <CheckCircle2 size={25} />
+                        <section className="relatorio-box">
+                            <div className="relatorio-box-header">
+                                <div>
+                                    <h2>Ocorrências por tipo</h2>
+                                    <p>{periodoSelecionado.label}</p>
+                                </div>
+                                <TrendingUp size={20} />
+                            </div>
 
-                    </div>
+                            {categorias.length === 0 ? (
+                                <p>Nenhuma ocorrência no período selecionado.</p>
+                            ) : (
+                                <div className="grafico-barras">
+                                    {categorias.map((item) => (
+                                        <div
+                                            className="barra-item"
+                                            key={item.nome}
+                                        >
+                                            <div className="barra-info">
+                                                <span>
+                                                    {nomeCategoria(item.nome)}
+                                                </span>
+                                                <strong>{item.total}</strong>
+                                            </div>
 
-                    <div className="relatorio-card azul">
-
-                        <div>
-                            <span>Em andamento</span>
-                            <strong>{dadosPeriodo.andamento}</strong>
-                        </div>
-
-                        <Clock size={25} />
-
-                    </div>
-
-                    <div className="relatorio-card vermelho">
-
-                        <div>
-                            <span>Urgentes abertas</span>
-                            <strong>{dadosPeriodo.urgentes}</strong>
-                            <small>
-                                Requerem atenção
-                            </small>
-                        </div>
-
-                        <AlertCircle size={25} />
-
-                    </div>
-
-                </section>
-
-                {/* Ocorrências por tipo */}
-
-                <section className="relatorio-box">
-
-                    <div className="relatorio-box-header">
-
-                        <div>
-                            <h2>Ocorrências por tipo</h2>
-
-                            <p>
-                                {periodoSelecionado.label}
-                            </p>
-                        </div>
-
-                        <TrendingUp size={20} />
-
-                    </div>
-
-                    <div className="grafico-barras">
-
-                        {dadosPeriodo.tipos.map(
-                            ([tipo, quantidade]) => {
-
-                                const maior =
-                                    Math.max(
-                                        ...dadosPeriodo.tipos.map(
-                                            (item) => item[1]
-                                        )
-                                    );
-
-                                const porcentagem =
-                                    (quantidade / maior) * 100;
-
-                                return (
-                                    <div
-                                        className="barra-item"
-                                        key={tipo}
-                                    >
-
-                                        <div className="barra-info">
-                                            <span>{tipo}</span>
-                                            <strong>
-                                                {quantidade}
-                                            </strong>
+                                            <div className="barra-fundo">
+                                                <div
+                                                    className="barra"
+                                                    style={{
+                                                        width: `${(item.total / maiorCategoria) * 100
+                                                            }%`,
+                                                    }}
+                                                />
+                                            </div>
                                         </div>
+                                    ))}
+                                </div>
+                            )}
+                        </section>
 
-                                        <div className="barra-fundo">
+                        <section className="relatorio-box">
+                            <div className="relatorio-box-header">
+                                <div>
+                                    <h2>Distribuição por status</h2>
+                                    <p>Situação das ocorrências</p>
+                                </div>
+                            </div>
 
-                                            <div
-                                                className="barra"
-                                                style={{
-                                                    width: `${porcentagem}%`,
-                                                }}
+                            {status.length === 0 ? (
+                                <p>Nenhum status encontrado no período.</p>
+                            ) : (
+                                <div className="status-relatorio">
+                                    {status.map((item) => (
+                                        <div
+                                            className="status-item"
+                                            key={item.status}
+                                        >
+                                            <span
+                                                className={`status-bolinha ${item.status === "concluido" ||
+                                                    item.status === "concluida"
+                                                    ? "concluido"
+                                                    : item.status === "pendente"
+                                                        ? "pendente"
+                                                        : "andamento"
+                                                    }`}
                                             />
-
+                                            <span>
+                                                {nomesStatus[item.status] ||
+                                                    item.status}
+                                            </span>
+                                            <strong>{numero(item.total)}</strong>
                                         </div>
+                                    ))}
+                                </div>
+                            )}
+                        </section>
 
-                                    </div>
-                                );
-                            }
-                        )}
+                        <section className="relatorio-box">
+                            <div className="relatorio-box-header">
+                                <div>
+                                    <h2>Bairros com mais ocorrências</h2>
+                                    <p>{periodoSelecionado.label}</p>
+                                </div>
+                            </div>
 
-                    </div>
+                            <div className="tabela-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Bairro</th>
+                                            <th>Total</th>
+                                            <th>Resolvidas</th>
+                                            <th>Taxa</th>
+                                            <th>Progresso</th>
+                                        </tr>
+                                    </thead>
 
-                </section>
-
-                {/* Status */}
-
-                <section className="relatorio-box">
-
-                    <div className="relatorio-box-header">
-
-                        <div>
-                            <h2>
-                                Distribuição por status
-                            </h2>
-
-                            <p>
-                                Situação das ocorrências
-                            </p>
-                        </div>
-
-                    </div>
-
-                    <div className="status-relatorio">
-
-                        <div className="status-item">
-                            <span className="status-bolinha concluido" />
-                            <span>Concluídas</span>
-                            <strong>
-                                {dadosPeriodo.resolvidas}
-                            </strong>
-                        </div>
-
-                        <div className="status-item">
-                            <span className="status-bolinha andamento" />
-                            <span>Em andamento</span>
-                            <strong>
-                                {dadosPeriodo.andamento}
-                            </strong>
-                        </div>
-
-                        <div className="status-item">
-                            <span className="status-bolinha pendente" />
-                            <span>Pendentes</span>
-                            <strong>
-                                {Math.max(
-                                    dadosPeriodo.total -
-                                    dadosPeriodo.resolvidas -
-                                    dadosPeriodo.andamento -
-                                    dadosPeriodo.urgentes,
-                                    0
-                                )}
-                            </strong>
-                        </div>
-
-                        <div className="status-item">
-                            <span className="status-bolinha urgente" />
-                            <span>Urgentes</span>
-                            <strong>
-                                {dadosPeriodo.urgentes}
-                            </strong>
-                        </div>
-
-                    </div>
-
-                </section>
-
-                {/* Bairros */}
-
-                <section className="relatorio-box">
-
-                    <div className="relatorio-box-header">
-
-                        <div>
-                            <h2>
-                                Bairros com mais ocorrências
-                            </h2>
-
-                            <p>
-                                {periodoSelecionado.label}
-                            </p>
-                        </div>
-
-                    </div>
-
-                    <div className="tabela-container">
-
-                        <table>
-
-                            <thead>
-                                <tr>
-                                    <th>Bairro</th>
-                                    <th>Total</th>
-                                    <th>Resolvidas</th>
-                                    <th>Taxa</th>
-                                    <th>Progresso</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-
-                                {dadosPeriodo.bairros.map(
-                                    ([bairro, total, resolvidas]) => {
-
-                                        const taxa =
-                                            Math.round(
-                                                (resolvidas / total) *
-                                                100
-                                            );
-
-                                        return (
-                                            <tr key={bairro}>
-
-                                                <td>
-                                                    {bairro}
+                                    <tbody>
+                                        {bairros.length === 0 ? (
+                                            <tr>
+                                                <td colSpan="5">
+                                                    Nenhuma ocorrência encontrada.
                                                 </td>
-
-                                                <td>
-                                                    {total}
-                                                </td>
-
-                                                <td className="texto-verde">
-                                                    {resolvidas}
-                                                </td>
-
-                                                <td>
-                                                    <span className="taxa">
-                                                        {taxa}%
-                                                    </span>
-                                                </td>
-
-                                                <td>
-
-                                                    <div className="progresso-fundo">
-
-                                                        <div
-                                                            className="progresso"
-                                                            style={{
-                                                                width: `${taxa}%`,
-                                                            }}
-                                                        />
-
-                                                    </div>
-
-                                                </td>
-
                                             </tr>
-                                        );
-                                    }
-                                )}
+                                        ) : (
+                                            bairros.map((item, indice) => {
+                                                const totalBairro = numero(item.total);
+                                                const resolvidasBairro = numero(item.resolvidas);
 
-                            </tbody>
+                                                const taxa = totalBairro > 0
+                                                    ? Math.round(
+                                                        (resolvidasBairro / totalBairro) * 100
+                                                    )
+                                                    : 0;
 
-                        </table>
+                                                return (
+                                                    <tr
+                                                        key={`${item.bairro}-${indice}`}
+                                                    >
+                                                        <td>
+                                                            {item.bairro || "Não informado"}
+                                                        </td>
+                                                        <td>{totalBairro}</td>
+                                                        <td className="texto-verde">
+                                                            {resolvidasBairro}
+                                                        </td>
+                                                        <td>
+                                                            <span className="taxa">
+                                                                {taxa}%
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <div className="progresso-fundo">
+                                                                <div
+                                                                    className="progresso"
+                                                                    style={{
+                                                                        width: `${taxa}%`,
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
 
-                    </div>
+                        <section className="relatorios-final">
+                            <button
+                                className="relatorios-btn-imprimir"
+                                onClick={imprimirRelatorio}
+                            >
+                                <Printer size={18} />
+                                Imprimir relatório
+                            </button>
 
-                </section>
-
-                {/* Botões finais */}
-
-                <section className="relatorios-final">
-
-                    <button
-                        className="relatorios-btn-imprimir"
-                        onClick={imprimirRelatorio}
-                    >
-                        <Printer size={18} />
-                        Imprimir relatório
-                    </button>
-
-                    <button
-                        className="relatorios-btn-exportar"
-                        onClick={imprimirRelatorio}
-                    >
-                        <Download size={18} />
-                        Exportar PDF completo
-                    </button>
-
-                </section>
-
+                            <button
+                                className="relatorios-btn-exportar"
+                                onClick={imprimirRelatorio}
+                            >
+                                <Download size={18} />
+                                Exportar PDF completo
+                            </button>
+                        </section>
+                    </>
+                )}
             </main>
-
         </div>
     );
 }

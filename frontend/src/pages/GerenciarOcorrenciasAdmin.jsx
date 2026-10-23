@@ -1,5 +1,6 @@
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
+import { apiRequest } from "../services/api";
+import Header from "../components/Header";
 import {
     Building2,
     LogOut,
@@ -28,100 +29,11 @@ function GerenciarOcorrenciasAdmin({
     onVoltar,
     onLogout,
     userName,
+    token,
 }) {
-    const [ocorrencias, setOcorrencias] = useState([
-        {
-            id: "047",
-            protocolo: "SCM-48271",
-            tipo: "Buraco na via",
-            endereco: "Rua das Flores, 142",
-            cidadao: "Carlos Santos",
-            data: "24/01/2026",
-            status: "Pendente",
-            prioridade: "Alta",
-            equipe: "",
-            descricao:
-                "Buraco de aproximadamente 1 metro de diâmetro na pista principal, causando desvios no trânsito local.",
-        },
-        {
-            id: "046",
-            protocolo: "SCM-31904",
-            tipo: "Semáforo quebrado",
-            endereco: "Av. Getúlio Vargas c/ Rua Central",
-            cidadao: "Ana Costa",
-            data: "24/01/2026",
-            status: "Pendente",
-            prioridade: "Urgente",
-            equipe: "",
-            descricao:
-                "Semáforo da esquina não está funcionando, causando congestionamento e risco de acidentes.",
-        },
-        {
-            id: "045",
-            protocolo: "SCM-20311",
-            tipo: "Iluminação pública",
-            endereco: "Rua do Comércio, 789",
-            cidadao: "Pedro Lima",
-            data: "23/01/2026",
-            status: "Em andamento",
-            prioridade: "Média",
-            equipe: "Equipe Elétrica A",
-            descricao:
-                "Diversos postes de luz apagados em trecho de aproximadamente 200 metros.",
-        },
-        {
-            id: "044",
-            protocolo: "SCM-19204",
-            tipo: "Calçada danificada",
-            endereco: "Rua das Palmeiras, 321",
-            cidadao: "Julia Sousa",
-            data: "23/01/2026",
-            status: "Em andamento",
-            prioridade: "Baixa",
-            equipe: "Equipe Pavimentação B",
-            descricao:
-                "Calçada com buracos e pedras soltas próximo à escola municipal.",
-        },
-        {
-            id: "043",
-            protocolo: "SCM-17882",
-            tipo: "Esgoto entupido",
-            endereco: "Travessa São João, 555",
-            cidadao: "Roberto Silva",
-            data: "22/01/2026",
-            status: "Concluído",
-            prioridade: "Alta",
-            equipe: "Equipe Saneamento A",
-            descricao:
-                "Esgoto transbordando na rua. Área higienizada e desentupida.",
-        },
-        {
-            id: "042",
-            protocolo: "SCM-15600",
-            tipo: "Lixo acumulado",
-            endereco: "Praça da Independência",
-            cidadao: "Mariana Reis",
-            data: "21/01/2026",
-            status: "Concluído",
-            prioridade: "Média",
-            equipe: "Equipe de Limpeza",
-            descricao:
-                "Entulho acumulado na praça, recolhido pela equipe de limpeza.",
-        },
-        {
-            id: "041",
-            protocolo: "SCM-14090",
-            tipo: "Árvore caída",
-            endereco: "Av. Principal, 88",
-            cidadao: "Lucas Faria",
-            data: "20/01/2026",
-            status: "Aguardando peças",
-            prioridade: "Alta",
-            equipe: "Equipe Pavimentação A",
-            descricao:
-                "Árvore tombada após chuva, aguardando equipamento para remoção.",
-        },
-    ]);
+    const [ocorrencias, setOcorrencias] = useState([]);
+    const [carregando, setCarregando] = useState(true);
+    const [erroCarregamento, setErroCarregamento] = useState("");
 
     const [busca, setBusca] = useState("");
     const [filtroStatus, setFiltroStatus] = useState("Todos");
@@ -139,6 +51,118 @@ function GerenciarOcorrenciasAdmin({
     const [salvando, setSalvando] = useState(false);
     const [toast, setToast] = useState("");
 
+    function formatarStatus(status) {
+        const valor = String(status || "")
+            .toLowerCase()
+            .trim()
+            .replace(/\s+/g, "_");
+
+        const statusMap = {
+            pendente: "Pendente",
+            em_analise: "Em análise",
+            "em_análise": "Em análise",
+            em_andamento: "Em andamento",
+            aguardando_pecas: "Aguardando peças",
+            "aguardando_peças": "Aguardando peças",
+            concluido: "Concluído",
+            concluida: "Concluído",
+            cancelado: "Cancelado",
+        };
+
+        return statusMap[valor] || status || "Pendente";
+    }
+
+    function formatarPrioridade(prioridade) {
+        const valor = String(prioridade || "baixa").toLowerCase();
+
+        const prioridadeMap = {
+            baixa: "Baixa",
+            media: "Média",
+            alta: "Alta",
+            urgente: "Urgente",
+        };
+
+        return prioridadeMap[valor] || prioridade;
+    }
+
+    function formatarData(data) {
+        if (!data) return "Data não informada";
+
+        const dataObj = new Date(data);
+
+        if (Number.isNaN(dataObj.getTime())) {
+            return "Data não informada";
+        }
+
+        return dataObj.toLocaleDateString("pt-BR", {
+            timeZone: "UTC",
+        });
+    }
+
+    function adaptarOcorrencia(dados) {
+        return {
+            ...dados,
+            id: String(dados.id),
+            tipo: dados.categoria || "Não informado",
+            endereco: [
+                dados.endereco,
+                dados.bairro,
+                dados.complemento,
+            ]
+                .filter(Boolean)
+                .join(", "),
+            cidadao: dados.usuario_nome || (
+                dados.usuario_id
+                    ? `Usuário ${dados.usuario_id}`
+                    : "Cidadão não identificado"
+            ),
+            data: formatarData(dados.criado_em),
+            status: formatarStatus(dados.status),
+            prioridade: formatarPrioridade(dados.prioridade),
+            equipe: dados.equipe || "",
+            descricao: dados.descricao || "",
+        };
+    }
+
+    useEffect(() => {
+        async function carregarOcorrencias() {
+            if (!token) {
+                setErroCarregamento(
+                    "Sessão não encontrada. Faça login novamente."
+                );
+                setCarregando(false);
+                return;
+            }
+
+            try {
+                setCarregando(true);
+                setErroCarregamento("");
+
+                const dados = await apiRequest(
+                    "/ocorrencias",
+                    { method: "GET" },
+                    token
+                );
+
+                if (!Array.isArray(dados)) {
+                    throw new Error(
+                        "A API retornou um formato inesperado."
+                    );
+                }
+
+                setOcorrencias(dados.map(adaptarOcorrencia));
+            } catch (erro) {
+                setErroCarregamento(
+                    erro.message || "Não foi possível carregar as ocorrências."
+                );
+            } finally {
+                setCarregando(false);
+            }
+        }
+
+        carregarOcorrencias();
+    }, [token]);
+
     const equipes = [
         "Equipe Pavimentação A",
         "Equipe Pavimentação B",
@@ -152,6 +176,7 @@ function GerenciarOcorrenciasAdmin({
 
     const statusOptions = [
         "Pendente",
+        "Em análise",
         "Em andamento",
         "Aguardando peças",
         "Concluído",
@@ -225,96 +250,184 @@ function GerenciarOcorrenciasAdmin({
         }, 3500);
     }
 
-    function salvarAtribuicao() {
+
+    async function salvarAtribuicao() {
         if (!selecionada || !novaEquipe) {
             return;
         }
 
         setSalvando(true);
+        setErroCarregamento("");
 
-        setTimeout(() => {
-            setOcorrencias((lista) =>
-                lista.map((ocorrencia) => {
-                    if (
-                        ocorrencia.id !==
-                        selecionada.id
-                    ) {
-                        return ocorrencia;
-                    }
+        try {
+            const dadosAtualizados = {
+                equipe: novaEquipe,
+            };
 
-                    return {
-                        ...ocorrencia,
-                        equipe: novaEquipe,
-                        status:
-                            ocorrencia.status ===
-                            "Pendente"
-                                ? "Em andamento"
-                                : ocorrencia.status,
-                    };
-                })
+            // Se a ocorrência estiver pendente, também inicia o andamento.
+            if (selecionada.status === "Pendente") {
+                dadosAtualizados.status = "em_andamento";
+            }
+
+            const resposta = await apiRequest(
+                `/ocorrencias/${selecionada.id}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(dadosAtualizados),
+                },
+                token
             );
 
-            setSalvando(false);
+            // Atualiza a lista com os dados retornados pela API.
+            const ocorrenciaAtualizada = adaptarOcorrencia({
+                ...selecionada,
+                ...resposta,
+                equipe: resposta.equipe ?? novaEquipe,
+                status: resposta.status ??
+                    dadosAtualizados.status ??
+                    selecionada.status,
+            });
+
+            setOcorrencias((lista) =>
+                lista.map((ocorrencia) =>
+                    ocorrencia.id === selecionada.id
+                        ? ocorrenciaAtualizada
+                        : ocorrencia
+                )
+            );
+
+            setSelecionada(ocorrenciaAtualizada);
             setModal(null);
 
             mostrarToast(
                 `Equipe "${novaEquipe}" atribuída à ocorrência ${selecionada.protocolo}.`
             );
-        }, 900);
+        } catch (erro) {
+            setErroCarregamento(
+                erro.message || "Não foi possível atribuir a equipe."
+            );
+
+            mostrarToast(
+                erro.message || "Erro ao salvar a equipe. Tente novamente."
+            );
+        } finally {
+            setSalvando(false);
+        }
     }
 
-    function salvarStatus() {
+
+    async function salvarStatus() {
         if (!selecionada || !novoStatus) {
             return;
         }
 
         setSalvando(true);
 
-        setTimeout(() => {
-            setOcorrencias((lista) =>
-                lista.map((ocorrencia) => {
-                    if (
-                        ocorrencia.id !==
-                        selecionada.id
-                    ) {
-                        return ocorrencia;
-                    }
+        try {
+            // Converte o status exibido na tela para o formato da API.
+            const statusMap = {
+                "Pendente": "pendente",
+                "Em análise": "em_análise",
+                "Em andamento": "em_andamento",
+                "Aguardando peças": "aguardando_pecas",
+                "Concluído": "concluido",
+                "Cancelado": "cancelado",
+            };
 
-                    return {
-                        ...ocorrencia,
-                        status: novoStatus,
-                    };
-                })
+            const statusParaEnviar = statusMap[novoStatus];
+
+            if (!statusParaEnviar) {
+                throw new Error("O status selecionado não é válido.");
+            }
+
+            // Envia o novo status ao backend.
+            const resposta = await apiRequest(
+                `/ocorrencias/${selecionada.id}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        status: statusParaEnviar,
+                    }),
+                },
+                token
             );
 
-            setSalvando(false);
+            // Atualiza a ocorrência com o retorno da API.
+            const ocorrenciaAtualizada = adaptarOcorrencia({
+                ...selecionada,
+                ...resposta,
+                status: resposta.status ?? statusParaEnviar,
+            });
+
+            setOcorrencias((lista) =>
+                lista.map((ocorrencia) =>
+                    ocorrencia.id === selecionada.id
+                        ? ocorrenciaAtualizada
+                        : ocorrencia
+                )
+            );
+
+            setSelecionada(ocorrenciaAtualizada);
             setModal(null);
 
             mostrarToast(
                 `Status da ocorrência ${selecionada.protocolo} atualizado.`
             );
-        }, 900);
+        } catch (erro) {
+            mostrarToast(
+                erro.message || "Não foi possível atualizar o status."
+            );
+        } finally {
+            setSalvando(false);
+        }
     }
 
-    function enviarNotificacao() {
-        if (
-            !selecionada ||
-            !mensagem.trim()
-        ) {
+    async function enviarNotificacao() {
+        if (!selecionada || !mensagem.trim() || salvando) {
             return;
         }
 
         setSalvando(true);
 
-        setTimeout(() => {
-            setSalvando(false);
+        try {
+            await apiRequest(
+                "/notificacoes",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        ocorrencia_id: Number(selecionada.id),
+                        mensagem: mensagem.trim(),
+                    }),
+                },
+                token
+            );
+
+            const protocolo = selecionada.protocolo;
+
             setModal(null);
+            setMensagem("");
 
             mostrarToast(
-                `Notificação registrada para ${selecionada.cidadao}.`
+                `Notificação enviada para ${selecionada.cidadao} — ${protocolo}.`
             );
-        }, 900);
+        } catch (erro) {
+            mostrarToast(
+                erro.message || "Não foi possível enviar a notificação."
+            );
+        } finally {
+            setSalvando(false);
+        }
     }
+
 
     function classeStatus(status) {
         switch (status) {
@@ -361,55 +474,11 @@ function GerenciarOcorrenciasAdmin({
         <div className="gerenciar-admin">
 
             {/* HEADER */}
-
-            <header className="gerenciar-admin-header">
-
-                <div className="gerenciar-admin-header-content">
-
-                    <div className="gerenciar-admin-brand">
-
-                        <div className="gerenciar-admin-logo">
-                            <Building2 size={23} />
-                        </div>
-
-                        <div>
-                            <h1>
-                                SCM Infraestrutura
-                            </h1>
-
-                            <p>
-                                Prefeitura Municipal —
-                                Painel Administrativo
-                            </p>
-                        </div>
-
-                    </div>
-
-                    <div className="gerenciar-admin-user">
-
-                        <div>
-                            <strong>
-                                {userName}
-                            </strong>
-
-                            <span>
-                                Administrador
-                            </span>
-                        </div>
-
-                        <button
-                            type="button"
-                            onClick={onLogout}
-                        >
-                            <LogOut size={16} />
-                            Sair
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </header>
+            <Header
+                userName={userName}
+                userRole="Administrador"
+                onLogout={onLogout}
+            />
 
             {/* CONTEÚDO */}
 
@@ -571,30 +640,54 @@ function GerenciarOcorrenciasAdmin({
                     {ocorrencias.length} ocorrências
                 </p>
 
+                {carregando && (
+                    <p role="status">
+                        Carregando ocorrências...
+                    </p>
+                )}
+
+                {!carregando && erroCarregamento && (
+                    <div role="alert" className="gerenciar-vazio">
+                        <AlertCircle size={40} />
+
+                        <h3>Não foi possível carregar as ocorrências</h3>
+
+                        <p>{erroCarregamento}</p>
+
+                        <button
+                            type="button"
+                            onClick={() => window.location.reload()}
+                        >
+                            Tentar novamente
+                        </button>
+                    </div>
+                )}
+
                 {/* LISTA */}
 
                 <section className="gerenciar-lista">
 
-                    {ocorrenciasFiltradas.length ===
-                        0 && (
-                        <div className="gerenciar-vazio">
+                    {!carregando &&
+                        !erroCarregamento &&
+                        ocorrenciasFiltradas.length === 0 && (
+                            <div className="gerenciar-vazio">
 
-                            <AlertCircle
-                                size={40}
-                            />
+                                <AlertCircle
+                                    size={40}
+                                />
 
-                            <h3>
-                                Nenhuma ocorrência
-                                encontrada
-                            </h3>
+                                <h3>
+                                    Nenhuma ocorrência
+                                    encontrada
+                                </h3>
 
-                            <p>
-                                Tente alterar os filtros
-                                ou a busca.
-                            </p>
+                                <p>
+                                    Tente alterar os filtros
+                                    ou a busca.
+                                </p>
 
-                        </div>
-                    )}
+                            </div>
+                        )}
 
                     {ocorrenciasFiltradas.map(
                         (ocorrencia) => {
@@ -606,11 +699,10 @@ function GerenciarOcorrenciasAdmin({
                             return (
                                 <article
                                     key={ocorrencia.id}
-                                    className={`gerenciar-card ${
-                                        aberta
-                                            ? "gerenciar-card-aberta"
-                                            : ""
-                                    }`}
+                                    className={`gerenciar-card ${aberta
+                                        ? "gerenciar-card-aberta"
+                                        : ""
+                                        }`}
                                 >
 
                                     {/* RESUMO */}
@@ -632,12 +724,12 @@ function GerenciarOcorrenciasAdmin({
                                             )}`}
                                         >
                                             {ocorrencia.status ===
-                                            "Concluído" ? (
+                                                "Concluído" ? (
                                                 <CheckCircle2
                                                     size={18}
                                                 />
                                             ) : ocorrencia.status ===
-                                              "Pendente" ? (
+                                                "Pendente" ? (
                                                 <AlertCircle
                                                     size={18}
                                                 />

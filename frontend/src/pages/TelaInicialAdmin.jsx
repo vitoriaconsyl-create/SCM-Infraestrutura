@@ -12,12 +12,12 @@ import "../styles/telaInicialAdmin.css";
 import Header from "../components/Header.jsx";
 
 function TelaInicialAdmin({
+    usuario,
     onLogout,
     onGerenciarOcorrencias,
     onVisualizarMapa,
     onRelatorios,
 }) {
-    const userName = "Maria Oliveira";
     
     const menuItems = [
         {
@@ -125,7 +125,7 @@ function TelaInicialAdmin({
         <div className="tela-inicial-admin">
 
             <Header
-                userName={userName}
+                userName={usuario?.nome || "Administrador"}
                 userRole="Administrador"
                 onLogout={onLogout}
             />

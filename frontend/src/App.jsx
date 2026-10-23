@@ -11,6 +11,7 @@ import TelaInicialAdmin from "./pages/TelaInicialAdmin.jsx";
 import GerenciarOcorrenciasAdmin from "./pages/GerenciarOcorrenciasAdmin.jsx";
 import MapaAdmin from "./pages/MapaAdmin.jsx";
 import EmitirRelatorios from "./pages/EmitirRelatorios.jsx";
+import MinhasNotificacoes from "./pages/MinhasNotificacoes.jsx";
 
 import Header from "./components/Header.jsx";
 
@@ -72,6 +73,17 @@ function App() {
         onLogout={sair}
       />
     );
+  } else if (screen === "minhasNotificacoes") {
+    exibirHeaderCidadao = true;
+
+    conteudo = (
+      <MinhasNotificacoes
+        token={token}
+        userName={usuario?.nome || "Cidadão"}
+        onVoltar={() => setScreen("telaInicial")}
+        onLogout={sair}
+      />
+    );
   } else if (screen === "telaInicial") {
     exibirHeaderCidadao = true;
 
@@ -89,27 +101,26 @@ function App() {
         onAcompanharOcorrencias={() =>
           setScreen("acompanharOcorrencias")
         }
+        onNotificacoes={() =>
+          setScreen("minhasNotificacoes")
+        }
       />
     );
   } else if (screen === "telaInicialAdmin") {
     conteudo = (
       <TelaInicialAdmin
+        usuario={usuario}
         onLogout={sair}
-        onGerenciarOcorrencias={() =>
-          setScreen("gerenciarOcorrencias")
-        }
-        onVisualizarMapa={() =>
-          setScreen("mapaAdmin")
-        }
-        onRelatorios={() =>
-          setScreen("relatorios")
-        }
+        onGerenciarOcorrencias={() => setScreen("gerenciarOcorrencias")}
+        onVisualizarMapa={() => setScreen("mapaAdmin")}
+        onRelatorios={() => setScreen("relatorios")}
       />
     );
   } else if (screen === "gerenciarOcorrencias") {
     conteudo = (
       <GerenciarOcorrenciasAdmin
-        userName="Maria Oliveira"
+        token={token}
+        userName={usuario?.nome || "Administrador"}
         onVoltar={() => setScreen("telaInicialAdmin")}
         onLogout={sair}
       />
@@ -117,15 +128,17 @@ function App() {
   } else if (screen === "mapaAdmin") {
     conteudo = (
       <MapaAdmin
+        token={token}
         onVoltar={() => setScreen("telaInicialAdmin")}
         onLogout={sair}
-        userName="Administrador"
+        userName={usuario?.nome || "Administrador"}
       />
     );
   } else if (screen === "relatorios") {
     conteudo = (
       <EmitirRelatorios
-        userName="Maria Oliveira"
+        token={token}
+        userName={usuario?.nome || "Administrador"}
         onVoltar={() => setScreen("telaInicialAdmin")}
         onLogout={sair}
       />

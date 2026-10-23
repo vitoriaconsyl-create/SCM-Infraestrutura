@@ -36,7 +36,8 @@ const criarOcorrencia = async (dados) => {
         imagem,
         usuario_id,
         prioridade,
-        protocolo
+        protocolo,
+        equipe
     } = dados;
 
     const resultado = await pool.query(
@@ -54,9 +55,10 @@ const criarOcorrencia = async (dados) => {
             imagem,
             usuario_id,
             prioridade,
-            protocolo
+            protocolo,
+            equipe
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
         RETURNING *
         `,
         [
@@ -71,7 +73,8 @@ const criarOcorrencia = async (dados) => {
             imagem,
             usuario_id,
             prioridade,
-            protocolo
+            protocolo,
+            equipe || null
         ]
     );
 
@@ -89,37 +92,40 @@ const atualizarOcorrencia = async (id, dados) => {
         latitude,
         longitude,
         imagem,
-        prioridade
+        prioridade,
+        equipe
     } = dados;
 
     const resultado = await pool.query(
         `
         UPDATE ocorrencias
         SET
-            descricao = $1,
-            categoria = $2,
-            status = $3,
-            endereco = $4,
-            bairro = $5,
-            complemento = $6,
-            latitude = $7,
-            longitude = $8,
-            imagem = $9,
-            prioridade = $10
-        WHERE id = $11
+            descricao = COALESCE($1, descricao),
+            categoria = COALESCE($2, categoria),
+            status = COALESCE($3, status),
+            endereco = COALESCE($4, endereco),
+            bairro = COALESCE($5, bairro),
+            complemento = COALESCE($6, complemento),
+            latitude = COALESCE($7, latitude),
+            longitude = COALESCE($8, longitude),
+            imagem = COALESCE($9, imagem),
+            prioridade = COALESCE($10, prioridade),
+            equipe = COALESCE($11, equipe)
+        WHERE id = $12
         RETURNING *
         `,
         [
-            descricao,
-            categoria,
-            status,
-            endereco,
-            bairro,
-            complemento,
-            latitude,
-            longitude,
-            imagem,
-            prioridade,
+            descricao ?? null,
+            categoria ?? null,
+            status ?? null,
+            endereco ?? null,
+            bairro ?? null,
+            complemento ?? null,
+            latitude ?? null,
+            longitude ?? null,
+            imagem ?? null,
+            prioridade ?? null,
+            equipe ?? null,
             id
         ]
     );

@@ -6,6 +6,7 @@ const relatorioRoutes = require("./routes/relatorioRoutes");
 const usuarioRoutes = require("./routes/usuarioRoutes");
 const authRoutes = require("./auth/authRoutes");
 const pool = require("./database/database");
+const notificacaoRoutes = require("./routes/notificacaoRoutes");
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/ocorrencias", ocorrenciaRoutes);
 app.use("/api/relatorios", relatorioRoutes);
 app.use("/api/usuarios", usuarioRoutes);
+app.use("/api/notificacoes", notificacaoRoutes);
 
 const PORT = 3000;
 

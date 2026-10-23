@@ -6,7 +6,7 @@ const buscarResumo = async (dataInicial) => {
         SELECT
             COUNT(*) AS total,
             COUNT(*) FILTER (
-                WHERE status = 'concluida'
+                WHERE status = 'concluido'
             ) AS resolvidas,
             COUNT(*) FILTER (
                 WHERE status = 'em_andamento'
@@ -61,16 +61,15 @@ const buscarPorBairro = async (dataInicial) => {
     const resultado = await pool.query(
         `
         SELECT
-            bairro,
-            COUNT(*) AS total,
-            COUNT(*) FILTER (
-                WHERE status = 'concluida'
-            ) AS resolvidas
-        FROM ocorrencias
-        WHERE criado_em >= $1
-        GROUP BY bairro
-        ORDER BY total DESC
-        `,
+    INITCAP(LOWER(TRIM(bairro))) AS bairro,
+    COUNT(*) AS total,
+    COUNT(*) FILTER (
+        WHERE status IN ('concluido', 'concluida')
+    ) AS resolvidas
+FROM ocorrencias
+WHERE criado_em >= $1
+GROUP BY LOWER(TRIM(bairro))
+ORDER BY bairro;`,
         [dataInicial]
     );
 
@@ -83,7 +82,7 @@ const buscarIndicadores = async (dataInicial) => {
         SELECT
             COUNT(*) AS total,
             COUNT(*) FILTER (
-                WHERE status = 'concluida'
+                WHERE status = 'concluido'
             ) AS resolvidas,
             COUNT(*) FILTER (
                 WHERE status = 'em_andamento'
@@ -93,7 +92,7 @@ const buscarIndicadores = async (dataInicial) => {
             ) AS pendentes,
             COUNT(*) FILTER (
                 WHERE prioridade = 'urgente'
-                AND status <> 'concluida'
+                AND status <> 'concluido'
             ) AS urgentes_abertas
         FROM ocorrencias
         WHERE criado_em >= $1

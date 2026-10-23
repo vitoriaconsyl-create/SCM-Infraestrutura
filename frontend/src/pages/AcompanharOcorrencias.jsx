@@ -416,6 +416,8 @@ function AcompanharOcorrencias({ token, onVoltar }) {
                             const podeEditar =
                                 normalizarStatus(ocorrencia.status) === "pendente";
 
+                            const podeExcluir = podeEditar;
+
 
                             return (
                                 <article
@@ -462,7 +464,7 @@ function AcompanharOcorrencias({ token, onVoltar }) {
                                                     Editar
                                                 </button>
                                             )}
-
+                                            { podeExcluir && ( 
                                             <button
                                                 type="button"
                                                 className="acompanhar-botao-excluir"
@@ -472,6 +474,7 @@ function AcompanharOcorrencias({ token, onVoltar }) {
                                                 <Trash2 size={16} />
                                                 Excluir
                                             </button>
+                                            )}
                                         </div>
                                     </div>
 

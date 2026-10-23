@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import Header from "../components/Header";
 import {
     Building2,
     LogOut,
@@ -29,9 +29,7 @@ import "leaflet/dist/leaflet.css";
 import "../styles/mapaAdmin.css";
 
 
-// =====================================================
 // CENTRO DE SANTA CRUZ DOS MILAGRES
-// =====================================================
 
 const CENTRO = [
     -5.804537713240668,
@@ -493,66 +491,14 @@ function MapaAdmin({
                 HEADER
             ================================================= */}
 
-            <header className="mapa-admin-header">
-
-                <div className="mapa-admin-header-esquerda">
-
-                    <div className="mapa-admin-logo">
-
-                        <Building2 size={24} />
-
-                    </div>
-
-                    <div>
-
-                        <h1>
-                            Sistema de Infraestrutura
-                        </h1>
-
-                        <p>
-                            Prefeitura Municipal de
-                            Santa Cruz dos Milagres
-                        </p>
-
-                    </div>
-
-                </div>
+             <Header
+                userName={userName}
+                userRole="Administrador"
+                onLogout={onLogout}
+            />
 
 
-                <div className="mapa-admin-header-direita">
-
-                    <div className="mapa-admin-usuario">
-
-                        <strong>
-                            {userName}
-                        </strong>
-
-                        <span>
-                            Administrador
-                        </span>
-
-                    </div>
-
-
-                    <button
-                        className="mapa-admin-sair"
-                        onClick={onLogout}
-                    >
-
-                        <LogOut size={17} />
-
-                        Sair
-
-                    </button>
-
-                </div>
-
-            </header>
-
-
-            {/* =================================================
-                FILTROS
-            ================================================= */}
+            {/* FILTROS */}
 
             <div className="mapa-admin-filtros">
 

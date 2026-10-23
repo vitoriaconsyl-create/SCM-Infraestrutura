@@ -6,6 +6,7 @@ import {
     AlertCircle,
     Plus,
     List,
+    Bell,
 } from "lucide-react";
 
 import { apiRequest } from "../services/api";
@@ -19,6 +20,7 @@ function TelaInicial({
     onRegistrarOcorrencia,
     onVisualizarMapa,
     onAcompanharOcorrencias,
+    onNotificacoes,
 }) {
     const userName = usuario?.nome || "Cidadão";
     const [recentOccurrences, setRecentOccurrences] = useState([]);
@@ -139,6 +141,13 @@ function TelaInicial({
             action: "acompanhar",
             color: "orange",
         },
+        {
+            icon: Bell,
+            title: "Minhas Notificações",
+            description: "Consulte mensagens da administração",
+            action: "notificacoes",
+            color: "green",
+        },
     ];
 
     return (
@@ -237,6 +246,9 @@ function TelaInicial({
 
                                         if (item.action === "acompanhar") {
                                             onAcompanharOcorrencias();
+                                        }
+                                        if (item.action === "notificacoes") {
+                                            onNotificacoes();
                                         }
                                     }}
                                 >

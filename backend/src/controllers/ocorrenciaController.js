@@ -1,5 +1,7 @@
 const ocorrenciaRepository = require("../repositories/ocorrenciaRepository");
 
+const notificacaoRepository = require("../repositories/notificacaoRepository");
+
 const criarOcorrenciaDto = require("../dtos/ocorrenciaDto");
 
 const atualizarOcorrenciaDto = require("../dtos/atualizarOcorrenciaDto");
@@ -76,7 +78,7 @@ const criarOcorrencia = async (req, res) => {
         dados.protocolo = `SCM-${numeroProtocolo}`;
 
         const ocorrencia = await ocorrenciaRepository.criarOcorrencia(dados);
-        
+
         res.status(201).json(
             criarOcorrenciaResponseDto(ocorrencia)
         );
@@ -88,6 +90,7 @@ const criarOcorrencia = async (req, res) => {
         });
     }
 };
+
 
 
 const atualizarOcorrencia = async (req, res) => {
@@ -113,31 +116,88 @@ const atualizarOcorrencia = async (req, res) => {
             });
         }
 
-        // O administrador mantém a possibilidade de atualizar
-        // a ocorrência conforme as regras administrativas existentes.
+        // ATUALIZAÇÃO ADMINISTRATIVA
         if (ehAdministrador) {
-            const {
-                descricao,
-                categoria,
-                status,
-                endereco,
-                bairro
-            } = req.body;
+            const camposPermitidos = [
+                "descricao",
+                "categoria",
+                "status",
+                "endereco",
+                "bairro",
+                "complemento",
+                "latitude",
+                "longitude",
+                "imagem",
+                "prioridade",
+                "equipe"
+            ];
 
-            if (
-                !descricao ||
-                !categoria ||
-                !status ||
-                !endereco ||
-                !bairro
-            ) {
+            const camposEnviados = Object.keys(req.body);
+
+            if (camposEnviados.length === 0) {
                 return res.status(400).json({
-                    erro: "Descrição, categoria, status, endereço e bairro são obrigatórios"
+                    erro: "Informe pelo menos um campo para atualizar"
                 });
             }
 
-            const dados = atualizarOcorrenciaDto(req.body);
+            const campoInvalido = camposEnviados.some(
+                (campo) => !camposPermitidos.includes(campo)
+            );
 
+            if (campoInvalido) {
+                return res.status(400).json({
+                    erro: "A requisição contém campos não permitidos"
+                });
+            }
+
+            const statusPermitidos = [
+                "pendente",
+                "em_análise",
+                "em_andamento",
+                "aguardando_peças",
+                "concluido",
+                "cancelado"
+            ];
+
+            if (req.body.status !== undefined) {
+                const statusRecebido = String(req.body.status)
+                    .trim()
+                    .toLowerCase();
+
+                if (!statusPermitidos.includes(statusRecebido)) {
+                    return res.status(400).json({
+                        erro: "Status inválido"
+                    });
+                }
+            }
+
+            const equipesPermitidas = [
+                "Equipe Pavimentação A",
+                "Equipe Pavimentação B",
+                "Equipe Elétrica A",
+                "Equipe Elétrica B",
+                "Equipe Saneamento A",
+                "Equipe Saneamento B",
+                "Equipe de Limpeza",
+                "Equipe de Sinalização"
+            ];
+
+            if (req.body.equipe !== undefined) {
+                if (
+                    req.body.equipe !== null &&
+                    !equipesPermitidas.includes(req.body.equipe)
+                ) {
+                    return res.status(400).json({
+                        erro: "Equipe inválida"
+                    });
+                }
+            }
+
+            const dados = {};
+
+            for (const campo of camposEnviados) {
+                dados[campo] = req.body[campo];
+            }
             const ocorrencia =
                 await ocorrenciaRepository.atualizarOcorrencia(
                     id,
@@ -150,12 +210,49 @@ const atualizarOcorrencia = async (req, res) => {
                 });
             }
 
+            // Cria uma notificação somente quando o status realmente muda.
+            const statusAnterior = String(
+                ocorrenciaExistente.status || ""
+            ).trim().toLowerCase();
+
+            const statusNovo = String(
+                ocorrencia.status || ""
+            ).trim().toLowerCase();
+
+            if (
+                dados.status !== undefined &&
+                statusAnterior !== statusNovo &&
+                ocorrencia.usuario_id
+            ) {
+                const statusExibicao = {
+                    pendente: "Pendente",
+                    "em_análise": "Em análise",
+                    em_analise: "Em análise",
+                    em_andamento: "Em andamento",
+                    "aguardando_peças": "Aguardando peças",
+                    aguardando_pecas: "Aguardando peças",
+                    concluido: "Concluído",
+                    concluída: "Concluído",
+                    cancelado: "Cancelado"
+                };
+
+                const statusFormatado =
+                    statusExibicao[statusNovo] || statusNovo;
+
+                await notificacaoRepository.criarNotificacao({
+                    usuario_id: ocorrencia.usuario_id,
+                    ocorrencia_id: ocorrencia.id,
+                    mensagem:
+                        `O status da sua ocorrência ${ocorrencia.protocolo || ""} foi atualizado para "${statusFormatado}".`
+                });
+            }
+
             return res.status(200).json(
                 criarOcorrenciaResponseDto(ocorrencia)
             );
         }
 
-        // O cidadão só pode editar a própria ocorrência.
+        // O CIDADÃO SÓ PODE EDITAR A PRÓPRIA OCORRÊNCIA.
         if (
             String(ocorrenciaExistente.usuario_id) !==
             String(usuario.id)
@@ -165,7 +262,7 @@ const atualizarOcorrencia = async (req, res) => {
             });
         }
 
-        // A edição só é permitida enquanto estiver pendente.
+        // A EDIÇÃO DO CIDADÃO SÓ É PERMITIDA ENQUANTO PENDENTE.
         const statusAtual = String(
             ocorrenciaExistente.status || ""
         )
@@ -197,10 +294,10 @@ const atualizarOcorrencia = async (req, res) => {
             categoria,
             endereco,
             bairro,
-            complemento: req.body.complemento || null,
+            complemento: req.body.complemento ?? null,
             latitude: req.body.latitude ?? null,
             longitude: req.body.longitude ?? null,
-            imagem: req.body.imagem || null,
+            imagem: req.body.imagem ?? null,
             prioridade: req.body.prioridade || "baixa"
         };
 
@@ -224,12 +321,11 @@ const atualizarOcorrencia = async (req, res) => {
     } catch (erro) {
         console.error(erro);
 
-        res.status(500).json({
+        return res.status(500).json({
             erro: "Erro ao atualizar ocorrência"
         });
     }
 };
-
 
 const excluirOcorrencia = async (req, res) => {
     try {
@@ -270,6 +366,22 @@ const excluirOcorrencia = async (req, res) => {
                     erro: "Você não tem permissão para excluir esta ocorrência"
                 });
             }
+
+            const statusAtual = String(
+                ocorrenciaExistente.status || ""
+            )
+                .trim()
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[\s-]+/g, "_");
+
+            if (statusAtual !== "pendente") {
+                return res.status(403).json({
+                    erro: "Esta ocorrência não pode ser excluída porque já teve seu atendimento iniciado ou seu status foi alterado."
+                });
+            }
+
 
             ocorrencia =
                 await ocorrenciaRepository.excluirOcorrenciaDoCidadao(
