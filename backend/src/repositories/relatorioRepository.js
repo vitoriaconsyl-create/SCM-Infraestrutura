@@ -103,6 +103,72 @@ const buscarIndicadores = async (dataInicial) => {
     return resultado.rows[0];
 };
 
+const buscarIndicadoresPainel = async () => {
+    const resultado = await pool.query(`
+        SELECT
+            COUNT(*) FILTER (
+                WHERE LOWER(TRIM(status)) NOT IN (
+                    'concluido',
+                    'concluida',
+                    'cancelado',
+                    'cancelada'
+                )
+            ) AS ocorrencias_ativas,
+
+            COUNT(*) FILTER (
+                WHERE LOWER(TRIM(status)) IN (
+                    'em_andamento',
+                    'em andament',
+                    'em andamento'
+                )
+            ) AS em_andamento,
+
+            COUNT(*) FILTER (
+    WHERE LOWER(TRIM(status)) IN (
+        'concluido',
+        'concluida'
+    )
+    AND concluida_em >= CURRENT_DATE
+    AND concluida_em < CURRENT_DATE + INTERVAL '1 day'
+) AS concluidas_hoje
+        FROM ocorrencias
+    `);
+
+    return resultado.rows[0];
+};
+
+
+const buscarOcorrenciasPendentesPainel = async () => {
+    const resultado = await pool.query(`
+        SELECT
+            o.id,
+            o.protocolo,
+            o.categoria,
+            o.endereco,
+            o.bairro,
+            o.prioridade,
+            o.status,
+            o.criado_em,
+            u.nome AS solicitante
+
+        FROM ocorrencias o
+
+        LEFT JOIN usuarios u
+            ON u.id = o.usuario_id
+
+        WHERE LOWER(TRIM(o.status)) IN (
+            'pendente',
+            'pendentes'
+        )
+
+        ORDER BY o.criado_em DESC
+
+        LIMIT 4
+    `);
+
+    return resultado.rows;
+};
+
 const buscarRelatorioCompleto = async (dataInicial) => {
     const resumo = await buscarResumo(dataInicial);
 
@@ -129,5 +195,7 @@ module.exports = {
     buscarPorStatus,
     buscarPorBairro,
     buscarIndicadores,
+    buscarIndicadoresPainel,
+    buscarOcorrenciasPendentesPainel,
     buscarRelatorioCompleto
 };

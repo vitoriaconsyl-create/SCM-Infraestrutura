@@ -110,6 +110,7 @@ function App() {
     conteudo = (
       <TelaInicialAdmin
         usuario={usuario}
+        token={token}
         onLogout={sair}
         onGerenciarOcorrencias={() => setScreen("gerenciarOcorrencias")}
         onVisualizarMapa={() => setScreen("mapaAdmin")}

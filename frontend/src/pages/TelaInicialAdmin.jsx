@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import {
     MapPin,
     FileText,
@@ -10,15 +12,64 @@ import {
 
 import "../styles/telaInicialAdmin.css";
 import Header from "../components/Header.jsx";
-
+import { apiRequest } from "../services/api.js";
 function TelaInicialAdmin({
     usuario,
+    token,
     onLogout,
     onGerenciarOcorrencias,
     onVisualizarMapa,
     onRelatorios,
 }) {
-    
+    const [indicadores, setIndicadores] = useState({
+        ocorrencias_ativas: 0,
+        em_andamento: 0,
+        concluidas_hoje: 0,
+    });
+
+    const [pendingOccurrences, setPendingOccurrences] = useState([]);
+    const [carregando, setCarregando] = useState(true);
+    const [erroCarregamento, setErroCarregamento] = useState("");
+
+    useEffect(() => {
+        if (!token) {
+            setErroCarregamento("Não foi possível identificar a sessão do administrador.");
+            setCarregando(false);
+            return;
+        }
+
+        async function carregarDadosPainel() {
+            try {
+                setCarregando(true);
+                setErroCarregamento("");
+
+                const [dadosIndicadores, dadosPendentes] = await Promise.all([
+                    apiRequest("/relatorios/painel", {}, token),
+                    apiRequest("/relatorios/pendentes-painel", {}, token),
+                ]);
+
+                setIndicadores({
+                    ocorrencias_ativas: Number(dadosIndicadores.ocorrencias_ativas ?? 0),
+                    em_andamento: Number(dadosIndicadores.em_andamento ?? 0),
+                    concluidas_hoje: Number(dadosIndicadores.concluidas_hoje ?? 0),
+                });
+
+                setPendingOccurrences(
+                    Array.isArray(dadosPendentes) ? dadosPendentes : []
+                );
+            } catch (erro) {
+                console.error("Erro ao carregar painel administrativo:", erro);
+                setErroCarregamento(
+                    erro.message || "Não foi possível carregar os dados do painel."
+                );
+            } finally {
+                setCarregando(false);
+            }
+        }
+
+        carregarDadosPainel();
+    }, [token]);
+
     const menuItems = [
         {
             icon: Settings,
@@ -49,71 +100,42 @@ function TelaInicialAdmin({
     const stats = [
         {
             label: "Ocorrências Ativas",
-            value: "47",
+            value: carregando ? "..." : indicadores.ocorrencias_ativas,
             icon: Clock,
             color: "orange",
         },
         {
             label: "Em Andamento",
-            value: "23",
+            value: carregando ? "..." : indicadores.em_andamento,
             icon: TrendingUp,
             color: "blue",
         },
         {
             label: "Concluídas Hoje",
-            value: "12",
+            value: carregando ? "..." : indicadores.concluidas_hoje,
             icon: CheckCircle2,
             color: "green",
         },
     ];
 
-    const pendingOccurrences = [
-        {
-            id: "047",
-            type: "Buraco na via",
-            location: "Rua Cosmo Catirino, 2",
-            priority: "Alta",
-            date: "24/01/2026",
-            citizen: "Carlos Santos",
-        },
-        {
-            id: "046",
-            type: "Entulho na rua",
-            location: "Av. Antônio Tomé, 23",
-            priority: "Média",
-            date: "24/01/2026",
-            citizen: "Ana Costa",
-        },
-        {
-            id: "045",
-            type: "Iluminação pública",
-            location: "Rua Teodoro Pereira, 52",
-            priority: "Média",
-            date: "23/01/2026",
-            citizen: "Pedro Lima",
-        },
-        {
-            id: "044",
-            type: "Calçada danificada",
-            location: "Rua Miguel Militão, 21",
-            priority: "Baixa",
-            date: "23/01/2026",
-            citizen: "Julia Sousa",
-        },
-    ];
-
     const getPriorityClass = (priority) => {
-        switch (priority) {
-            case "Urgente":
+        const prioridade = String(priority || "")
+            .trim()
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "");
+
+        switch (prioridade) {
+            case "urgente":
                 return "admin-priority-urgente";
 
-            case "Alta":
+            case "alta":
                 return "admin-priority-alta";
 
-            case "Média":
+            case "media":
                 return "admin-priority-media";
 
-            case "Baixa":
+            case "baixa":
                 return "admin-priority-baixa";
 
             default:
@@ -249,46 +271,65 @@ function TelaInicialAdmin({
                     </div>
 
                     <div className="admin-pending-list">
+                        {carregando && (
+                            <p>Carregando ocorrências...</p>
+                        )}
 
+                        {!carregando && erroCarregamento && (
+                            <p>{erroCarregamento}</p>
+                        )}
+
+                        {!carregando &&
+                            !erroCarregamento &&
+                            pendingOccurrences.length === 0 && (
+                                <p>Não há ocorrências pendentes no momento.</p>
+                            )}
                         {pendingOccurrences.map((occurrence) => (
 
                             <article
                                 key={occurrence.id}
                                 className="admin-pending-item"
                             >
-
                                 <div className="admin-pending-information">
-
                                     <div className="admin-pending-icon">
                                         <AlertCircle size={20} />
                                     </div>
 
                                     <div className="admin-pending-content">
-
                                         <p className="admin-pending-title">
-
-                                            #{occurrence.id} - {occurrence.type}
+                                            #{occurrence.protocolo || occurrence.id} - {occurrence.categoria}
 
                                             <span
                                                 className={`admin-priority ${getPriorityClass(
-                                                    occurrence.priority
+                                                    String(occurrence.prioridade || "Baixa")
+                                                        .toLowerCase()
+                                                        .replace("média", "media")
+                                                        .replace("urgente", "urgente")
+                                                        .replace("alta", "alta")
+                                                        .replace("baixa", "baixa")
                                                 )}`}
                                             >
-                                                {occurrence.priority}
+                                                {String(occurrence.prioridade || "Baixa")
+                                                    .charAt(0)
+                                                    .toUpperCase() +
+                                                    String(occurrence.prioridade || "Baixa").slice(1)}
                                             </span>
-
                                         </p>
 
                                         <p className="admin-pending-location">
-                                            {occurrence.location}
+                                            {[occurrence.endereco, occurrence.bairro]
+                                                .filter(Boolean)
+                                                .join(" - ") || "Endereço não informado"}
                                         </p>
 
                                         <p className="admin-pending-citizen">
-                                            Solicitante: {occurrence.citizen} • {occurrence.date}
+                                            Solicitante: {occurrence.solicitante || "Não informado"}
+                                            {" • "}
+                                            {occurrence.criado_em
+                                                ? new Date(occurrence.criado_em).toLocaleDateString("pt-BR")
+                                                : "Data não informada"}
                                         </p>
-
                                     </div>
-
                                 </div>
 
                                 <button
@@ -298,9 +339,7 @@ function TelaInicialAdmin({
                                 >
                                     Atribuir
                                 </button>
-
                             </article>
-
                         ))}
 
                     </div>

@@ -47,6 +47,20 @@ router.get(
 );
 
 router.get(
+    "/painel",
+    autenticar,
+    autorizar("administrador"),
+    relatorioController.buscarIndicadoresPainel
+);
+
+router.get(
+    "/pendentes-painel",
+    autenticar,
+    autorizar("administrador"),
+    relatorioController.buscarOcorrenciasPendentesPainel
+);
+
+router.get(
     "/",
     autenticar,
     autorizar("administrador"),

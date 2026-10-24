@@ -102,7 +102,16 @@ const atualizarOcorrencia = async (id, dados) => {
         SET
             descricao = COALESCE($1, descricao),
             categoria = COALESCE($2, categoria),
-            status = COALESCE($3, status),
+            status = COALESCE($3, status), 
+            concluida_em = CASE
+    WHEN $3 IS NULL THEN concluida_em
+    WHEN LOWER(TRIM($3)) IN ('concluido', 'concluida')
+        AND LOWER(TRIM(status)) NOT IN ('concluido', 'concluida')
+        THEN CURRENT_TIMESTAMP
+    WHEN LOWER(TRIM($3)) NOT IN ('concluido', 'concluida')
+        THEN NULL
+    ELSE concluida_em
+END,
             endereco = COALESCE($4, endereco),
             bairro = COALESCE($5, bairro),
             complemento = COALESCE($6, complemento),

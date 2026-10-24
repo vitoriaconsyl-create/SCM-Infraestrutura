@@ -232,11 +232,44 @@ const buscarRelatorioCompleto = async (req, res) => {
     }
 };
 
+const buscarIndicadoresPainel = async (req, res) => {
+    try {
+        const resultado =
+            await relatorioRepository.buscarIndicadoresPainel();
+
+        res.status(200).json(resultado);
+    } catch (erro) {
+        console.error("Erro ao buscar indicadores do painel:", erro);
+
+        res.status(500).json({
+            erro: "Erro ao buscar indicadores do painel"
+        });
+    }
+};
+
+
+const buscarOcorrenciasPendentesPainel = async (req, res) => {
+    try {
+        const resultado =
+            await relatorioRepository.buscarOcorrenciasPendentesPainel();
+
+        res.status(200).json(resultado);
+    } catch (erro) {
+        console.error("Erro ao buscar ocorrências pendentes:", erro);
+
+        res.status(500).json({
+            erro: "Erro ao buscar ocorrências pendentes"
+        });
+    }
+};
+
 module.exports = {
     buscarResumo,
     buscarPorCategoria,
     buscarPorStatus,
     buscarPorBairro,
     buscarIndicadores,
-    buscarRelatorioCompleto
+    buscarRelatorioCompleto,
+    buscarIndicadoresPainel,
+    buscarOcorrenciasPendentesPainel
 };
