@@ -175,7 +175,7 @@ function EmitirRelatorios({
                     <div>
                         <h1>Relatório de Ocorrências</h1>
                         <p>
-                            Análise estatística das ocorrências —{" "}
+                            Visão geral das ocorrências —{" "}
                             {periodoSelecionado.label}
                         </p>
                     </div>
@@ -241,7 +241,7 @@ function EmitirRelatorios({
 
                             <div className="relatorio-card">
                                 <div>
-                                    <span>Total registradas</span>
+                                    <span>Total de ocorrências</span>
                                     <strong>{total}</strong>
                                 </div>
                                 <FileText size={25} />
@@ -266,9 +266,9 @@ function EmitirRelatorios({
 
                             <div className="relatorio-card vermelho">
                                 <div>
-                                    <span>Urgentes abertas</span>
+                                    <span>Ocorrências urgentes abertas</span>
                                     <strong>{urgentes}</strong>
-                                    <small>Requerem atenção</small>
+                                    <small>Requerem atenção prioritária</small>
                                 </div>
                                 <AlertCircle size={25} />
                             </div>
@@ -324,7 +324,7 @@ function EmitirRelatorios({
                             </div>
 
                             {status.length === 0 ? (
-                                <p>Nenhum status encontrado no período.</p>
+                                <p>Nenhuma ocorrência encontrada para este período.</p>
                             ) : (
                                 <div className="status-relatorio">
                                     {status.map((item) => (
@@ -376,7 +376,7 @@ function EmitirRelatorios({
                                         {bairros.length === 0 ? (
                                             <tr>
                                                 <td colSpan="5">
-                                                    Nenhuma ocorrência encontrada.
+                                                    Nenhuma ocorrência encontrada neste bairro.
                                                 </td>
                                             </tr>
                                         ) : (
@@ -395,7 +395,7 @@ function EmitirRelatorios({
                                                         key={`${item.bairro}-${indice}`}
                                                     >
                                                         <td>
-                                                            {item.bairro || "Não informado"}
+                                                            {item.bairro || "Não disponível"}
                                                         </td>
                                                         <td>{totalBairro}</td>
                                                         <td className="texto-verde">

@@ -92,12 +92,12 @@ function TelaInicial({
     };
 
     const formatarData = (data) => {
-        if (!data) return "Data não informada";
+        if (!data) return "Data não disponível";
 
         const dataConvertida = new Date(data);
 
         if (Number.isNaN(dataConvertida.getTime())) {
-            return "Data não informada";
+            return "Data não disponível";
         }
 
         return dataConvertida.toLocaleDateString("pt-BR", {
@@ -122,29 +122,29 @@ function TelaInicial({
             return statusConhecidos[statusNormalizado];
         }
 
-        if (!status) return "Não informado";
+        if (!status) return "Não disponível";
 
         return status.charAt(0).toUpperCase() + status.slice(1);
     };
     const menuItems = [
         {
             icon: MapPin,
-            title: "Visualizar Mapa",
-            description: "Veja ocorrências na sua região",
+            title: "Visualizar mapa",
+            description: "Consulte ocorrências registradas na sua região.",
             action: "mapa",
             color: "green",
         },
         {
             icon: Eye,
-            title: "Acompanhar Ocorrências",
-            description: "Veja o status das suas solicitações",
+            title: "Acompanhar ocorrências",
+            description: "Acompanhe o andamento das suas ocorrências.",
             action: "acompanhar",
             color: "orange",
         },
         {
             icon: Bell,
-            title: "Minhas Notificações",
-            description: "Consulte mensagens da administração",
+            title: "Minhas notificações",
+            description: "Consulte as notificações enviadas pela administração.",
             action: "notificacoes",
             color: "green",
         },
@@ -164,7 +164,7 @@ function TelaInicial({
                     </h2>
 
                     <p>
-                        Escolha uma opção abaixo para gerenciar suas ocorrências
+                        Escolha uma opção abaixo para acessar os serviços da plataforma.
                     </p>
 
                 </section>
@@ -192,7 +192,7 @@ function TelaInicial({
 
                             <div className="main-action-text">
                                 <h3>Registrar Ocorrência</h3>
-                                <p>Reporte um problema de infraestrutura na sua região</p>
+                                <p>Registre um problema de infraestrutura identificado na sua região.</p>
                             </div>
 
                         </div>
@@ -270,11 +270,11 @@ function TelaInicial({
                         <div>
 
                             <h2>
-                                Ocorrências Recentes
+                                Ocorrências recentes
                             </h2>
 
                             <p>
-                                Suas últimas solicitações registradas
+                                Confira suas últimas ocorrências cadastradas.
                             </p>
 
                         </div>

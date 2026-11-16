@@ -130,61 +130,177 @@ function RegistrarOcorrencia({
   }
 
   function usarGPS() {
-    setLocalSelecionado(
-      form.latitude !== null && form.longitude !== null
-        ? {
-          latitude: Number(form.latitude),
-          longitude: Number(form.longitude),
-        }
-        : null
-    );
+    if (!navigator.geolocation) {
+      alert("Seu navegador não oferece suporte à localização por GPS.");
 
-    setMostrarMapa(true);
-  }
+      setLocalSelecionado(
+        form.latitude !== null && form.longitude !== null
+          ? {
+            latitude: Number(form.latitude),
+            longitude: Number(form.longitude),
+          }
+          : null
+      );
 
-  function selecionarImagem(e) {
-    const file = e.target.files[0];
-
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) return;
-
-    if (file.size > 5 * 1024 * 1024) {
-      alert("Imagem maior que 5MB.");
+      setMostrarMapa(true);
       return;
     }
 
-    setImageName(file.name);
+    setGpsLoading(true);
+
+    navigator.geolocation.getCurrentPosition(
+      (posicao) => {
+        const coordenadas = {
+          latitude: posicao.coords.latitude,
+          longitude: posicao.coords.longitude,
+        };
+
+        setLocalSelecionado(coordenadas);
+        setMostrarMapa(true);
+        setGpsLoading(false);
+      },
+
+      (erro) => {
+        setGpsLoading(false);
+
+        let mensagem = "Não foi possível identificar sua localização.";
+
+        if (erro.code === erro.PERMISSION_DENIED) {
+          mensagem = "A permissão de localização foi negada. Você poderá escolher o local manualmente no mapa.";
+        } else if (erro.code === erro.POSITION_UNAVAILABLE) {
+          mensagem = "Sua localização está indisponível no momento. Você poderá escolher o local manualmente no mapa.";
+        } else if (erro.code === erro.TIMEOUT) {
+          mensagem = "O tempo para identificar sua localização terminou. Você poderá escolher o local manualmente no mapa.";
+        }
+
+        alert(mensagem);
+
+        setLocalSelecionado(
+          form.latitude !== null && form.longitude !== null
+            ? {
+              latitude: Number(form.latitude),
+              longitude: Number(form.longitude),
+            }
+            : null
+        );
+
+        setMostrarMapa(true);
+      },
+
+      {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 0,
+      }
+    );
+  }
+
+  function selecionarImagem(e) {
+    const input = e.currentTarget;
+    const file = input.files?.[0];
+
+    if (!file) return;
+
+    // Permite selecionar novamente o mesmo arquivo
+    input.value = "";
+
+    const extensao = file.name.split(".").pop().toLowerCase();
+
+    const extensoesPermitidas = ["png", "jpg", "jpeg"];
+    const tiposPermitidos = ["image/png", "image/jpeg", "image/jpg"];
+
+    const formatoValido =
+      extensoesPermitidas.includes(extensao) &&
+      (!file.type || tiposPermitidos.includes(file.type));
+
+    if (!formatoValido) {
+      alert("Formato inválido. Selecione uma imagem PNG, JPG ou JPEG.");
+      return;
+    }
+
+    if (file.size === 0) {
+      alert("O arquivo selecionado está vazio.");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("A imagem deve ter no máximo 5 MB.");
+      return;
+    }
 
     const reader = new FileReader();
 
     reader.onload = () => {
-      setImage(reader.result);
+      if (typeof reader.result === "string") {
+        setImage(reader.result);
+        setImageName(file.name);
+      } else {
+        alert("Não foi possível carregar a imagem. Tente novamente.");
+      }
+    };
+
+    reader.onerror = () => {
+      alert("Erro ao ler a fotografia. Selecione o arquivo novamente.");
     };
 
     reader.readAsDataURL(file);
   }
 
+  function removerImagem() {
+  setImage(null);
+  setImageName("");
+
+  if (fileRef.current) {
+    fileRef.current.value = "";
+  }
+}
+
   function validar() {
     const novo = {};
 
-    if (!form.tipo)
-      novo.tipo = "Selecione o tipo.";
+    if (!form.tipo) {
+      novo.tipo = "Selecione o tipo de ocorrência.";
+    }
 
-    if (!form.endereco)
+    if (!form.endereco.trim()) {
       novo.endereco = "Informe o endereço.";
+    }
 
-    if (!form.bairro)
+    if (!form.bairro.trim()) {
       novo.bairro = "Informe o bairro.";
+    }
 
-    if (form.descricao.length < 20)
+    const descricao = form.descricao.trim();
+
+    if (!descricao) {
+      novo.descricao = "Informe a descrição da ocorrência.";
+    } else if (descricao.length < 20) {
       novo.descricao =
-        "Descrição deve ter pelo menos 20 caracteres.";
+        "A descrição deve conter pelo menos 20 caracteres.";
+    } else if (descricao.length > 500) {
+      novo.descricao =
+        "A descrição deve conter no máximo 500 caracteres.";
+    }
 
-    if (!form.urgencia)
-      novo.urgencia = "Selecione a urgência.";
+    if (!form.urgencia) {
+      novo.urgencia = "Selecione o nível de urgência.";
+    }
 
     setErrors(novo);
+
+    // Leva a tela até o primeiro campo com erro
+    if (Object.keys(novo).length > 0) {
+      requestAnimationFrame(() => {
+        const primeiroErro = document.querySelector(
+          ".registrar-form .error"
+        );
+
+        primeiroErro?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      });
+    }
 
     return Object.keys(novo).length === 0;
   }
@@ -242,9 +358,7 @@ function RegistrarOcorrencia({
 
     setProtocol("");
 
-    setImage(null);
-
-    setImageName("");
+    removerImagem();
 
     setErrors({});
 
@@ -310,7 +424,7 @@ function RegistrarOcorrencia({
                 className="btn-primary"
                 onClick={novaOcorrencia}
               >
-                Registrar outra
+                Registrar outra ocorrência
               </button>
 
             </div>
@@ -335,13 +449,16 @@ function RegistrarOcorrencia({
               className="registrar-form"
               onSubmit={enviar}
             >
+              <p>
+                * Campos obrigatórios.
+              </p>
 
               {/* Tipo */}
 
               <section className="form-card">
 
                 <h3>
-                  1. Tipo de ocorrência
+                  1. Tipo de ocorrência *
                 </h3>
 
                 <div className="tipos-grid">
@@ -395,7 +512,7 @@ function RegistrarOcorrencia({
                 </h3>
 
                 <label>
-                  Endereço
+                  Endereço *
                 </label>
 
                 <div className="gps-row">
@@ -427,7 +544,7 @@ function RegistrarOcorrencia({
                       <MapPin size={18} />
                     )}
 
-                    Escolher local
+                    Selecionar no mapa
 
                   </button>
 
@@ -451,7 +568,7 @@ function RegistrarOcorrencia({
 
                 )}
                 <label>
-                  Bairro
+                  Bairro *
                 </label>
 
                 <input
@@ -498,13 +615,13 @@ function RegistrarOcorrencia({
               <section className="form-card">
 
                 <h3>
-                  3. Descrição
+                  3. Descrição *
                 </h3>
 
                 <textarea
                   rows={6}
                   maxLength={500}
-                  placeholder="Descreva detalhadamente o problema..."
+                  placeholder="Descreva o problema, informando o que aconteceu e, se possível, há quanto tempo ele existe. (Mínimo de 20 caracteres)"
                   value={form.descricao}
                   onChange={(e) =>
                     atualizarCampo(
@@ -547,7 +664,7 @@ function RegistrarOcorrencia({
               <section className="form-card">
 
                 <h3>
-                  4. Nível de urgência
+                  4. Nível de urgência *
                 </h3>
 
                 <div className="urgencia-grid">
@@ -612,7 +729,7 @@ function RegistrarOcorrencia({
                 <div className="foto-header">
 
                   <h3>
-                    5. Foto do Local
+                    5. Foto do Local (opcional)
                   </h3>
 
                   {image && (
@@ -620,10 +737,7 @@ function RegistrarOcorrencia({
                     <button
                       type="button"
                       className="remove-image"
-                      onClick={() => {
-                        setImage(null);
-                        setImageName("");
-                      }}
+                      onClick={removerImagem}
                     >
                       <X size={16} />
                       Remover
@@ -658,7 +772,7 @@ function RegistrarOcorrencia({
 
                     <img
                       src={image}
-                      alt="Preview"
+                      alt="Pré-visualização da fotografia"
                     />
 
                     <div className="preview-info">

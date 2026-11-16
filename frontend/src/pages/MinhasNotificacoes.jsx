@@ -79,12 +79,12 @@ function MinhasNotificacoes({
   ).length;
 
   function formatarData(data) {
-    if (!data) return "Data não informada";
+    if (!data) return "Data não disponível";
 
     const dataConvertida = new Date(data);
 
     if (Number.isNaN(dataConvertida.getTime())) {
-      return "Data não informada";
+      return "Data não disponível";
     }
 
     return dataConvertida.toLocaleString("pt-BR", {
@@ -108,8 +108,8 @@ function MinhasNotificacoes({
             <h1>Minhas notificações</h1>
 
             <p>
-              Olá, {userName || "Cidadão"}. Confira as mensagens
-              enviadas pela administração.
+              Olá, {userName || "Cidadão"}. Confira as notificações enviadas pela 
+              administração sobre suas ocorrências.
             </p>
           </div>
 
@@ -124,7 +124,7 @@ function MinhasNotificacoes({
           </div>
 
           <div>
-            <span>Mensagens não lidas</span>
+            <span>Notificações não lidas</span>
             <strong>{naoLidas}</strong>
           </div>
         </section>
@@ -156,9 +156,9 @@ function MinhasNotificacoes({
         ) : notificacoes.length === 0 ? (
           <div className="notificacoes-vazio">
             <Bell size={34} />
-            <h3>Nenhuma notificação</h3>
+            <h3>Nenhuma notificação encontrada</h3>
             <p>
-              Quando a administração enviar uma mensagem, ela
+              Quando a administração enviar uma notificação, ela
               aparecerá aqui.
             </p>
           </div>
@@ -231,7 +231,7 @@ function MinhasNotificacoes({
             className="notificacoes-voltar"
             onClick={onVoltar}
           >
-            Voltar ao início
+            Voltar ao paínel
           </button>
         </div>
       </div>

@@ -86,12 +86,12 @@ function GerenciarOcorrenciasAdmin({
     }
 
     function formatarData(data) {
-        if (!data) return "Data não informada";
+        if (!data) return "Data não disponível";
 
         const dataObj = new Date(data);
 
         if (Number.isNaN(dataObj.getTime())) {
-            return "Data não informada";
+            return "Data não disponível ";
         }
 
         return dataObj.toLocaleDateString("pt-BR", {
@@ -103,7 +103,7 @@ function GerenciarOcorrenciasAdmin({
         return {
             ...dados,
             id: String(dados.id),
-            tipo: dados.categoria || "Não informado",
+            tipo: dados.categoria || "Categoria não informada",
             endereco: [
                 dados.endereco,
                 dados.bairro,
@@ -516,7 +516,7 @@ function GerenciarOcorrenciasAdmin({
                         </strong>
 
                         <span>
-                            Total
+                            Total de ocorrências
                         </span>
                     </div>
 
@@ -677,13 +677,11 @@ function GerenciarOcorrenciasAdmin({
                                 />
 
                                 <h3>
-                                    Nenhuma ocorrência
-                                    encontrada
+                                    Nenhuma ocorrência encontrada com os filtros selecionados
                                 </h3>
 
                                 <p>
-                                    Tente alterar os filtros
-                                    ou a busca.
+                                    Tente ajustar os filtros ou modificar os termos da busca.
                                 </p>
 
                             </div>
@@ -803,7 +801,7 @@ function GerenciarOcorrenciasAdmin({
                                                 }
                                             >
                                                 <Eye size={14} />
-                                                Ver
+                                                Detalhes
                                             </button>
 
                                             <button
@@ -817,7 +815,7 @@ function GerenciarOcorrenciasAdmin({
                                                 }
                                             >
                                                 <Users size={14} />
-                                                Atribuir
+                                                Atribuir equipe
                                             </button>
 
                                             <button
@@ -833,7 +831,7 @@ function GerenciarOcorrenciasAdmin({
                                                 <CheckCircle2
                                                     size={14}
                                                 />
-                                                Status
+                                                Atualizar status
                                             </button>
 
                                             <button
@@ -1349,8 +1347,7 @@ function GerenciarOcorrenciasAdmin({
                                     />
 
                                     <p className="modal-ajuda">
-                                        A mensagem será registrada
-                                        no sistema.
+                                        A mensagem será registrada no sistema e vinculada à ocorrência.
                                     </p>
 
                                     <div className="modal-botoes">

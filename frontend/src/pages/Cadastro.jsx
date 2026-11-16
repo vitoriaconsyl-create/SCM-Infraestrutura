@@ -247,14 +247,14 @@ function Cadastro({ onVoltar, onCadastroSucesso }) {
               </button>
 
               <h2>
-                Realizar Cadastro
+                Criar conta
               </h2>
 
             </div>
 
             <p>
-              Preencha os dados abaixo para obter
-              acesso à plataforma
+              Preencha os dados abaixo para criar
+              sua conta na plataforma.
             </p>
 
             <p className="legenda-obrigatorio">
@@ -283,8 +283,7 @@ function Cadastro({ onVoltar, onCadastroSucesso }) {
                 </p>
 
                 <p className="success-description">
-                  Seu cadastro foi realizado com sucesso.
-                  Agora você pode acessar a plataforma usando
+                  Agora você pode acessar a plataforma utilizando
                   seu e-mail e sua senha.
                 </p>
 
@@ -449,7 +448,7 @@ function Cadastro({ onVoltar, onCadastroSucesso }) {
               <div className="cadastro-field">
 
                 <label htmlFor="telefone">
-                  Telefone / WhatsApp <span className="campo-obrigatorio">*</span>
+                  Telefone ou WhatsApp <span className="campo-obrigatorio">*</span>
                 </label>
 
                 <div className="cadastro-input-wrapper">
@@ -492,7 +491,7 @@ function Cadastro({ onVoltar, onCadastroSucesso }) {
               <div className="cadastro-field">
 
                 <label htmlFor="bairro">
-                  Bairro / Localidade <span className="campo-obrigatorio">*</span>
+                  Bairro ou localidade <span className="campo-obrigatorio">*</span>
                 </label>
 
                 <div className="cadastro-input-wrapper">

@@ -337,7 +337,7 @@ function TelaInicialAdmin({
                                     className="admin-assign-button"
                                     onClick={onGerenciarOcorrencias}
                                 >
-                                    Atribuir
+                                    Gerenciar
                                 </button>
                             </article>
                         ))}

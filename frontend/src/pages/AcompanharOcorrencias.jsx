@@ -41,11 +41,13 @@ function AcompanharOcorrencias({ token, onVoltar }) {
                     token
                 );
 
-                if (ativo) {
-                    setOcorrencias(
-                        Array.isArray(dados) ? dados : []
+                if (!Array.isArray(dados)) {
+                    throw new Error(
+                        "Não foi possível interpretar os dados das ocorrências."
                     );
                 }
+
+                setOcorrencias(dados);
             } catch (erro) {
                 console.error(
                     "Erro ao carregar minhas ocorrências:",
@@ -203,7 +205,7 @@ function AcompanharOcorrencias({ token, onVoltar }) {
     }
 
     function formatarData(data) {
-        if (!data) return "Data não informada";
+        if (!data) return "Data não disponível";
 
         const dataObjeto = new Date(data);
 
@@ -229,7 +231,7 @@ function AcompanharOcorrencias({ token, onVoltar }) {
             outro: "Outra ocorrência",
         };
 
-        if (!categoria) return "Ocorrência";
+        if (!categoria) return "Categoria não informada";
 
         return categorias[categoria.toLowerCase()] ||
             categoria.charAt(0).toUpperCase() + categoria.slice(1);
@@ -299,12 +301,15 @@ function AcompanharOcorrencias({ token, onVoltar }) {
     }
 
     function montarEndereco(ocorrencia) {
+        const endereco = ocorrencia.endereco?.trim();
+        const bairro = ocorrencia.bairro?.trim();
+
         return [
-            ocorrencia.endereco,
-            ocorrencia.bairro,
+            endereco,
+            bairro,
         ]
             .filter(Boolean)
-            .join(" — ") || "Endereço não informado";
+            .join(" — ") || "Localização não informada";
     }
 
     function etapaConcluida(ocorrencia, etapa) {
@@ -354,7 +359,7 @@ function AcompanharOcorrencias({ token, onVoltar }) {
                     <div>
                         <h2>Minhas Ocorrências</h2>
                         <p>
-                            Consulte suas solicitações e acompanhe o andamento
+                            Consulte suas ocorrências e acompanhe o andamento
                             de cada uma delas.
                         </p>
                     </div>
@@ -399,11 +404,10 @@ function AcompanharOcorrencias({ token, onVoltar }) {
                     <div className="acompanhar-vazio">
                         <FileText size={38} />
 
-                        <h3>Nenhuma ocorrência registrada</h3>
+                        <h3>Você ainda não possui ocorrências registradas</h3>
 
                         <p>
-                            Quando você registrar uma solicitação, ela aparecerá
-                            aqui para acompanhamento.
+                            Suas solicitações aparecerão aqui assim que forem registradas.
                         </p>
                     </div>
                 )}
@@ -441,7 +445,7 @@ function AcompanharOcorrencias({ token, onVoltar }) {
                                                 <span>
                                                     Protocolo:{" "}
                                                     {ocorrencia.protocolo ||
-                                                        "Não informado"}
+                                                        "Protocolo não disponível"}
                                                 </span>
                                             </div>
                                         </div>
@@ -464,16 +468,16 @@ function AcompanharOcorrencias({ token, onVoltar }) {
                                                     Editar
                                                 </button>
                                             )}
-                                            { podeExcluir && ( 
-                                            <button
-                                                type="button"
-                                                className="acompanhar-botao-excluir"
-                                                onClick={() => excluirOcorrencia(ocorrencia)}
-                                                title="Excluir ocorrência"
-                                            >
-                                                <Trash2 size={16} />
-                                                Excluir
-                                            </button>
+                                            {podeExcluir && (
+                                                <button
+                                                    type="button"
+                                                    className="acompanhar-botao-excluir"
+                                                    onClick={() => excluirOcorrencia(ocorrencia)}
+                                                    title="Excluir ocorrência"
+                                                >
+                                                    <Trash2 size={16} />
+                                                    Excluir
+                                                </button>
                                             )}
                                         </div>
                                     </div>
@@ -498,8 +502,8 @@ function AcompanharOcorrencias({ token, onVoltar }) {
                                     </div>
 
                                     <p className="acompanhar-descricao">
-                                        {ocorrencia.descricao ||
-                                            "Sem descrição informada."}
+                                        {ocorrencia.descricao?.trim() ||
+                                            "Nenhuma descrição disponível."}
                                     </p>
 
                                     {ocorrenciaEditando &&
@@ -586,7 +590,7 @@ function AcompanharOcorrencias({ token, onVoltar }) {
                                                 />
 
                                                 <label htmlFor={`prioridade-${ocorrencia.id}`}>
-                                                    Prioridade
+                                                    Nível de urgência
                                                 </label>
                                                 <select
                                                     id={`prioridade-${ocorrencia.id}`}

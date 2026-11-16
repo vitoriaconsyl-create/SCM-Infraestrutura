@@ -509,7 +509,7 @@ function MapaAdmin({
 
                     <ArrowLeft size={17} />
 
-                    Voltar ao painel
+                    Voltar ao painel administrativo
 
                 </button>
 
@@ -745,7 +745,7 @@ function MapaAdmin({
                     <div className="mapa-admin-legenda">
 
                         <strong>
-                            Legenda
+                            Legenda dos status
                         </strong>
 
 
@@ -1004,7 +1004,7 @@ function MapaAdmin({
                                         )
                                     }
                                 >
-                                    Status
+                                    Atualizar status
                                 </button>
 
                                 <button
@@ -1164,7 +1164,7 @@ function MapaAdmin({
                                                         15
                                                     }
                                                 />
-                                                Status
+                                                Atualizar status
                                             </button>
 
                                             <button
@@ -1200,7 +1200,7 @@ function MapaAdmin({
                                             <strong>
                                                 {" "}
                                                 {selecionada.equipe ||
-                                                    "Nenhuma"}
+                                                    "Nenhuma equipe atribuída"}
                                             </strong>
                                         </p>
 

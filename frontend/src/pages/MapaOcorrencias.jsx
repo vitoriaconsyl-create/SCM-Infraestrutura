@@ -213,12 +213,12 @@ function MapaOcorrencias({
   }
 
   function formatarData(data) {
-    if (!data) return "Data não informada";
+    if (!data) return "Data não disponível";
 
     const dataConvertida = new Date(data);
 
     if (Number.isNaN(dataConvertida.getTime())) {
-      return "Data não informada";
+      return "Data não disponível";
     }
 
     return dataConvertida.toLocaleDateString("pt-BR");
@@ -500,7 +500,7 @@ function MapaOcorrencias({
           <div className="legenda">
 
             <strong>
-              Legenda
+              Legenda dos status
             </strong>
 
 
@@ -573,17 +573,17 @@ function MapaOcorrencias({
 
           <div className="lista-ocorrencias">
             {carregando ? (
-              <p>Carregando ocorrências...</p>
+              <p>Carregando as ocorrências...</p>
             ) : erro ? (
               <p role="alert">{erro}</p>
             ) : visiveis.length === 0 ? (
               <div className="nenhuma-ocorrencia">
                 <MapPin size={42} strokeWidth={1.5} />
 
-                <strong>Nenhuma ocorrência</strong>
+                <strong>Nenhuma ocorrência encontrada</strong>
 
                 <span>
-                  Nenhum registro com o filtro selecionado.
+                  Não há ocorrências para o filtro selecionado.
                 </span>
               </div>
             ) : (

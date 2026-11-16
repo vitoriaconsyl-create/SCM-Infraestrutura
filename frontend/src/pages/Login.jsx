@@ -12,7 +12,7 @@ import "../styles/login.css";
 import fundo from "../assets/scm.jpg";
 import { apiRequest } from "../services/api";
 
-function Login({ onLogin, onSolicitarCadastro }) {
+function Login({ onLogin, onSolicitarCadastro, onEsqueciSenha }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -55,8 +55,6 @@ function Login({ onLogin, onSolicitarCadastro }) {
           "O perfil deste usuário não é reconhecido pelo sistema."
         );
       }
-
-      onLogin(dados.usuario, dados.token);
       const perfilReal =
         tipoUsuario === "admin" ||
           tipoUsuario === "administrador"
@@ -162,7 +160,7 @@ function Login({ onLogin, onSolicitarCadastro }) {
 
                 <input
                   id="email"
-                  type="text"
+                  type="email"
                   placeholder="seuemail@gmail.com"
                   value={email}
                   onChange={(event) =>
@@ -227,6 +225,7 @@ function Login({ onLogin, onSolicitarCadastro }) {
               <button
                 type="button"
                 className="forgot-password"
+                onClick={onEsqueciSenha}
               >
                 Esqueci minha senha
               </button>
@@ -255,7 +254,7 @@ function Login({ onLogin, onSolicitarCadastro }) {
                 className="forgot-password"
                 onClick={onSolicitarCadastro}
               >
-                Solicitar cadastro
+                Criar minha conta.
               </button>
             </p>
 
