@@ -19,7 +19,7 @@ function Login({ onLogin, onSolicitarCadastro, onEsqueciSenha }) {
   const [showAlert, setShowAlert] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-
+  const [lembrarMe, setLembrarMe] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -40,6 +40,7 @@ function Login({ onLogin, onSolicitarCadastro, onEsqueciSenha }) {
         body: JSON.stringify({
           email: email.trim(),
           senha: password,
+          lembrarMe,
         }),
       });
       const tipoUsuario = String(
@@ -69,7 +70,7 @@ function Login({ onLogin, onSolicitarCadastro, onEsqueciSenha }) {
         );
       }
 
-      onLogin(dados.usuario, dados.token);
+      onLogin(dados.usuario, dados.token, lembrarMe, lembrarMe);
     } catch (erro) {
       setErrorMessage(
         erro.message || "Não foi possível realizar o login."
@@ -214,6 +215,8 @@ function Login({ onLogin, onSolicitarCadastro, onEsqueciSenha }) {
 
                 <input
                   type="checkbox"
+                  checked={lembrarMe}
+                  onChange={(event) => setLembrarMe(event.target.checked)}
                 />
 
                 <span>

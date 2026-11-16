@@ -9,7 +9,7 @@ const { enviarEmailRecuperacao } = require("../services/emailService");
 // LOGIN
 const login = async (req, res) => {
     try {
-        const { email, senha } = req.body;
+        const { email, senha, lembrarMe } = req.body;
 
         if (!email || !senha) {
             return res.status(400).json({
@@ -42,7 +42,7 @@ const login = async (req, res) => {
             },
             process.env.JWT_SECRET,
             {
-                expiresIn: "1h"
+                expiresIn: lembrarMe === true ? "30d" : "1h"
             }
         );
 
