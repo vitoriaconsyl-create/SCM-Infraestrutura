@@ -667,4 +667,19 @@
   .cadastro-footer {
     font-size: 12px;
   }
+}.senha-requisitos {
+    margin-top: 8px;
+    font-size: 12px;
+}
+
+.senha-requisitos p {
+    margin: 4px 0;
+}
+
+.senha-requisitos .senha-requisito {
+    color: #64748b;
+}
+
+.senha-requisitos .senha-requisito.atendido {
+    color: #15803d;
 }

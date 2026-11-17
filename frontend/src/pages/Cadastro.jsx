@@ -61,6 +61,8 @@ function Cadastro({ onVoltar, onCadastroSucesso }) {
     confirmarSenha: "",
   });
 
+
+
   const [errors, setErrors] = useState({});
 
   const [showSenha, setShowSenha] = useState(false);
@@ -72,6 +74,16 @@ function Cadastro({ onVoltar, onCadastroSucesso }) {
   const [submitError, setSubmitError] = useState(false);
 
   const [enviando, setEnviando] = useState(false);
+
+  const requisitosSenha = {
+    tamanho: form.senha.length >= 8,
+    maiuscula: /[A-Z]/.test(form.senha),
+    minuscula: /[a-z]/.test(form.senha),
+    numero: /[0-9]/.test(form.senha),
+    especial: /[!@#$%&*]/.test(form.senha),
+  };
+
+  const senhaValida = Object.values(requisitosSenha).every(Boolean);
 
   const handleChange = (field, value) => {
     let formatted = value;
@@ -127,9 +139,9 @@ function Cadastro({ onVoltar, onCadastroSucesso }) {
         "Informe seu bairro ou endereço.";
     }
 
-    if (form.senha.length < 8) {
+    if (!senhaValida) {
       newErrors.senha =
-        "A senha deve ter ao menos 8 caracteres.";
+        "A senha não atende a todos os requisitos.";
     }
 
     if (form.senha !== form.confirmarSenha) {
@@ -261,7 +273,7 @@ function Cadastro({ onVoltar, onCadastroSucesso }) {
               <span className="campo-obrigatorio">*</span>
               {" "}Campos obrigatórios
             </p>
-            
+
           </div>
 
           {/* Sucesso */}
@@ -586,6 +598,28 @@ function Cadastro({ onVoltar, onCadastroSucesso }) {
                     )}
                   </button>
 
+                </div>
+                <div className="senha-requisitos">
+                  <p>A senha deve conter:</p>
+
+                  {[
+                    ["tamanho", "Pelo menos 8 caracteres"],
+                    ["maiuscula", "Uma letra maiúscula"],
+                    ["minuscula", "Uma letra minúscula"],
+                    ["numero", "Um número"],
+                    ["especial", "Um caractere especial (! @ # $ % & *)"],
+                  ].map(([chave, texto]) => (
+                    <p
+                      key={chave}
+                      className={
+                        requisitosSenha[chave]
+                          ? "senha-requisito atendido"
+                          : "senha-requisito"
+                      }
+                    >
+                      {requisitosSenha[chave] ? "✓" : "○"} {texto}
+                    </p>
+                  ))}
                 </div>
 
                 {errors.senha && (

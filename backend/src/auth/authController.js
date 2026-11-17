@@ -168,9 +168,17 @@ const redefinirSenha = async (req, res) => {
             });
         }
 
-        if (novaSenha.length < 8) {
+        const senhaValida =
+            typeof novaSenha === "string" &&
+            novaSenha.length >= 8 &&
+            /[A-Z]/.test(novaSenha) &&
+            /[a-z]/.test(novaSenha) &&
+            /[0-9]/.test(novaSenha) &&
+            /[!@#$%&*]/.test(novaSenha);
+
+        if (!senhaValida) {
             return res.status(400).json({
-                erro: "A senha deve possuir pelo menos 8 caracteres"
+                erro: "A senha deve conter pelo menos 8 caracteres, uma letra maiúscula, uma minúscula, um número e um caractere especial (! @ # $ % & *)."
             });
         }
 

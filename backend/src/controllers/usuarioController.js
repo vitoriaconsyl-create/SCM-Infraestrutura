@@ -115,9 +115,17 @@ const criarUsuario = async (req, res) => {
             });
         }
 
-        if (senha.length < 8) {
+        const senhaValida =
+            typeof senha === "string" &&
+            senha.length >= 8 &&
+            /[A-Z]/.test(senha) &&
+            /[a-z]/.test(senha) &&
+            /[0-9]/.test(senha) &&
+            /[!@#$%&*]/.test(senha);
+
+        if (!senhaValida) {
             return res.status(400).json({
-                erro: "A senha deve ter pelo menos 8 caracteres."
+                erro: "A senha deve conter pelo menos 8 caracteres, uma letra maiúscula, uma minúscula, um número e um caractere especial (! @ # $ % & *)."
             });
         }
 
@@ -154,7 +162,7 @@ const criarUsuario = async (req, res) => {
                 erro: "Já existe um usuário cadastrado com este e-mail."
             });
         }
-        
+
         return res.status(500).json({
             erro: "Erro ao cadastrar usuário"
         });

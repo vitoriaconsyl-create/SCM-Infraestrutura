@@ -26,6 +26,16 @@ function RedefinirSenha({ token, onVoltar }) {
     const [erro, setErro] = useState("");
     const [sucesso, setSucesso] = useState(false);
 
+    const requisitosSenha = {
+        tamanho: novaSenha.length >= 8,
+        maiuscula: /[A-Z]/.test(novaSenha),
+        minuscula: /[a-z]/.test(novaSenha),
+        numero: /[0-9]/.test(novaSenha),
+        especial: /[!@#$%&*]/.test(novaSenha),
+    };
+
+    const senhaValida = Object.values(requisitosSenha).every(Boolean);
+
     useEffect(() => {
         const verificarToken = async () => {
             if (!token) {
@@ -58,8 +68,8 @@ function RedefinirSenha({ token, onVoltar }) {
 
         setErro("");
 
-        if (novaSenha.length < 8) {
-            setErro("A senha deve possuir pelo menos 8 caracteres.");
+        if (!senhaValida) {
+            setErro("A senha não atende a todos os requisitos.");
             return;
         }
 
@@ -201,6 +211,29 @@ function RedefinirSenha({ token, onVoltar }) {
                                         minLength={8}
                                         disabled={loading}
                                     />
+                                </div>
+
+                                <div className="senha-requisitos">
+                                    <p>A senha deve conter:</p>
+
+                                    {[
+                                        ["tamanho", "Pelo menos 8 caracteres"],
+                                        ["maiuscula", "Uma letra maiúscula"],
+                                        ["minuscula", "Uma letra minúscula"],
+                                        ["numero", "Um número"],
+                                        ["especial", "Um caractere especial (! @ # $ % & *)"],
+                                    ].map(([chave, texto]) => (
+                                        <p
+                                            key={chave}
+                                            className={
+                                                requisitosSenha[chave]
+                                                    ? "senha-requisito atendido"
+                                                    : "senha-requisito"
+                                            }
+                                        >
+                                            {requisitosSenha[chave] ? "✓" : "○"} {texto}
+                                        </p>
+                                    ))}
                                 </div>
                             </div>
 
