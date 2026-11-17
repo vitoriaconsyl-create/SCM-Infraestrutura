@@ -121,6 +121,7 @@ function GerenciarOcorrenciasAdmin({
             prioridade: formatarPrioridade(dados.prioridade),
             equipe: dados.equipe || "",
             descricao: dados.descricao || "",
+            imagem: dados.imagem || null,
         };
     }
 
@@ -911,7 +912,15 @@ function GerenciarOcorrenciasAdmin({
                                             <p className="gerenciar-descricao">
                                                 {ocorrencia.descricao}
                                             </p>
-
+                                            {ocorrencia.imagem && (
+                                                <div className="gerenciar-foto">
+                                                    <h4>Fotografia do local</h4>
+                                                    <img
+                                                        src={ocorrencia.imagem}
+                                                        alt={`Fotografia da ocorrência ${ocorrencia.protocolo}`}
+                                                    />
+                                                </div>
+                                            )}
                                             {/* AÇÕES MOBILE */}
 
                                             <div className="gerenciar-acoes-mobile">

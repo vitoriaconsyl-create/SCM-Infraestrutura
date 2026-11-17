@@ -1066,4 +1066,23 @@
     .gerenciar-modal-content {
         padding: 18px;
     }
+}.gerenciar-foto {
+    margin-top: 20px;
+}
+
+.gerenciar-foto h4 {
+    margin: 0 0 12px;
+    color: #334155;
+    font-size: 14px;
+}
+
+.gerenciar-foto img {
+    display: block;
+    width: 100%;
+    max-width: 500px;
+    max-height: 350px;
+    object-fit: contain;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    background: #fff;
 }

@@ -114,6 +114,7 @@ function RegistrarOcorrencia({
   const [protocol, setProtocol] = useState("");
 
   const fileRef = useRef(null);
+  const [arrastandoImagem, setArrastandoImagem] = useState(false);
 
   function atualizarCampo(campo, valor) {
     setForm((old) => ({
@@ -195,17 +196,10 @@ function RegistrarOcorrencia({
     );
   }
 
-  function selecionarImagem(e) {
-    const input = e.currentTarget;
-    const file = input.files?.[0];
-
+  function processarImagem(file) {
     if (!file) return;
 
-    // Permite selecionar novamente o mesmo arquivo
-    input.value = "";
-
     const extensao = file.name.split(".").pop().toLowerCase();
-
     const extensoesPermitidas = ["png", "jpg", "jpeg"];
     const tiposPermitidos = ["image/png", "image/jpeg", "image/jpg"];
 
@@ -233,27 +227,83 @@ function RegistrarOcorrencia({
     reader.onload = () => {
       if (typeof reader.result === "string") {
         setImage(reader.result);
-        setImageName(file.name);
+        setImageName(file.name || "Imagem colada");
       } else {
-        alert("Não foi possível carregar a imagem. Tente novamente.");
+        alert("Não foi possível carregar a imagem.");
       }
     };
 
     reader.onerror = () => {
-      alert("Erro ao ler a fotografia. Selecione o arquivo novamente.");
+      alert("Erro ao ler a fotografia. Tente novamente.");
     };
 
     reader.readAsDataURL(file);
   }
 
-  function removerImagem() {
-  setImage(null);
-  setImageName("");
+  function selecionarImagem(e) {
+    const input = e.currentTarget;
+    const file = input.files?.[0];
 
-  if (fileRef.current) {
-    fileRef.current.value = "";
+    input.value = "";
+
+    processarImagem(file);
   }
-}
+
+  function aoArrastarImagem(e) {
+    e.preventDefault();
+    setArrastandoImagem(true);
+  }
+
+  function aoSairDaArea(e) {
+    e.preventDefault();
+    setArrastandoImagem(false);
+  }
+
+  function aoSoltarImagem(e) {
+    e.preventDefault();
+    setArrastandoImagem(false);
+
+    const file = Array.from(e.dataTransfer.files).find(
+      (arquivo) => arquivo.type.startsWith("image/")
+    );
+
+    if (file) {
+      processarImagem(file);
+    }
+  }
+
+  function aoColarImagem(e) {
+    const itens = Array.from(e.clipboardData.items);
+
+    const itemImagem = itens.find(
+      (item) => item.type.startsWith("image/")
+    );
+
+    if (!itemImagem) return;
+
+    e.preventDefault();
+
+    const arquivo = itemImagem.getAsFile();
+
+    if (arquivo) {
+      const imagemComNome = new File(
+        [arquivo],
+        `imagem-colada.${arquivo.type === "image/png" ? "png" : "jpg"}`,
+        { type: arquivo.type }
+      );
+
+      processarImagem(imagemComNome);
+    }
+  }
+
+  function removerImagem() {
+    setImage(null);
+    setImageName("");
+
+    if (fileRef.current) {
+      fileRef.current.value = "";
+    }
+  }
 
   function validar() {
     const novo = {};
@@ -448,6 +498,7 @@ function RegistrarOcorrencia({
             <form
               className="registrar-form"
               onSubmit={enviar}
+              onPaste={aoColarImagem}
             >
               <p>
                 * Campos obrigatórios.
@@ -752,6 +803,9 @@ function RegistrarOcorrencia({
                   <label
                     htmlFor="foto"
                     className="upload-area"
+                    onDragOver={aoArrastarImagem}
+                    onDragLeave={aoSairDaArea}
+                    onDrop={aoSoltarImagem}
                   >
 
                     <ImageIcon size={42} />

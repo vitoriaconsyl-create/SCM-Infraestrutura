@@ -939,4 +939,8 @@
         padding:20px;
     }
 
+}.upload-area.arrastando {
+    border-color: #2563eb;
+    background: #eff6ff;
+    transform: scale(1.01);
 }
